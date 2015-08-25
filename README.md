@@ -1,4 +1,4 @@
-Mobile Metrica - Unity Plugin
+AppMetrica - Unity Plugin
 ==========================
 
 В директории **MetricaPluginSample** лежит пример с интегрированным плагином для Unity 5+.

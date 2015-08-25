@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="ru.yandex.mobile.metricapluginunity"
+      android:versionCode="1"
+      android:versionName="1.0">
+  <uses-sdk android:minSdkVersion="9" />
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <application android:label="@string/app_name"
+               android:icon="@drawable/app_icon">
+    <service
+            android:name="com.yandex.metrica.MetricaService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":Metrica">
+      <intent-filter>
+          <category android:name="android.intent.category.DEFAULT"/>
+          <action android:name="com.yandex.metrica.IMetricaService"/>
+          <data android:scheme="metrica"/>
+      </intent-filter>
+      <meta-data android:name="metrica:api:level" android:value="31"/>
+    </service>
+    <receiver
+          android:name="com.yandex.metrica.MetricaEventHandler"
+          android:enabled="true"
+          android:exported="true">
+        <intent-filter>
+            <action android:name="com.android.vending.INSTALL_REFERRER"/>
+        </intent-filter>
+    </receiver>           
+    <activity android:name="com.unity3d.player.UnityPlayerActivity"
+              android:configChanges="keyboardHidden|orientation"
+              android:label="@string/app_name">
+      
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>

@@ -199,11 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7b82b1248c84e468b83ba7fb3f14a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  APIKey: 62868
+  APIKey: 
   ExceptionsReporting: 1
-  MaxReportsCount: 10
-  DispatchPeriodSec: 90
-  SessionTimeoutSec: 300
+  SessionTimeoutSec: 10
   TrackLocation: 1
 --- !u!4 &1763507356
 Transform:

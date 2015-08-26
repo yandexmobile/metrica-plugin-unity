@@ -14,15 +14,9 @@ public class AppMetrica : MonoBehaviour
 	
 	[SerializeField]
 	private bool ExceptionsReporting = true;
-	
+
 	[SerializeField]
-	private uint MaxReportsCount = 10;
-	
-	[SerializeField]
-	private uint DispatchPeriodSec = 90;
-	
-	[SerializeField]
-	private uint SessionTimeoutSec = 300;
+	private uint SessionTimeoutSec = 10;
 
 	[SerializeField]
 	private bool TrackLocation = true;
@@ -61,9 +55,7 @@ public class AppMetrica : MonoBehaviour
 
 	void setupMetrica ()
 	{
-		Instance.MaxReportsCount = MaxReportsCount;
 		Instance.SessionTimeout = SessionTimeoutSec;
-		Instance.DispatchPeriod = DispatchPeriodSec;
 		Instance.TrackLocationEnabled = TrackLocation;
 		Instance.ReportCrashesEnabled = ExceptionsReporting;
 
@@ -77,7 +69,7 @@ public class AppMetrica : MonoBehaviour
 		if (!_isInitialized) {
 			_isInitialized = true;
 			DontDestroyOnLoad(this.gameObject);
-			Instance.StartWithAPIKey(APIKey);
+			Instance.ActivateWithAPIKey(APIKey);
 		} else {
 			Destroy(this.gameObject);
 		}

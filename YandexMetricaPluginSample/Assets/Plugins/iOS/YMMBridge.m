@@ -6,11 +6,11 @@
 
 static NSString *const kYMMUnityExceptionName = @"UnityException";
 
-void ymm_startWithAPIKey(char *apiKey) 
+void ymm_activateWithAPIKey(char *apiKey)
 {
     if (apiKey != NULL) {
         NSString *apiKeyString = [NSString stringWithUTF8String:apiKey];
-        [YMMYandexMetrica startWithAPIKey:apiKeyString];
+        [YMMYandexMetrica activateWithApiKey:apiKeyString];
     }
 }
 
@@ -53,24 +53,9 @@ void ymm_reportError(char *condition, char *stackTrace)
     }
 }
 
-void ymm_sendEventsBuffer()
-{
-    [YMMYandexMetrica sendEventsBuffer];
-}
-
-void ymm_startNewSessionManually()
-{
-    [YMMYandexMetrica startNewSessionManually];
-}
-
 void ymm_setTrackLocationEnabled(bool enabled)
 {
     [YMMYandexMetrica setTrackLocationEnabled:(BOOL)enabled];
-}
-
-bool ymm_isTrackLocationEnabled()
-{
-    return [YMMYandexMetrica isTrackLocationEnabled];
 }
 
 void ymm_setLocation(double latitude, double longitude)
@@ -80,54 +65,14 @@ void ymm_setLocation(double latitude, double longitude)
     [YMMYandexMetrica setLocation:location];
 }
 
-void ymm_setDispatchPeriod(unsigned int dispatchPeriodSeconds)
-{
-    [YMMYandexMetrica setDispatchPeriod:(NSUInteger)dispatchPeriodSeconds];
-}
-
-unsigned int ymm_dispatchPeriod()
-{
-    return (unsigned int)[YMMYandexMetrica dispatchPeriod];
-}
-
-void ymm_setMaxReportsCount(unsigned int maxReportsCount)
-{
-    [YMMYandexMetrica setMaxReportsCount:(NSUInteger)maxReportsCount];
-}
-
-unsigned int ymm_maxReportsCount()
-{
-    return (unsigned int)[YMMYandexMetrica maxReportsCount];
-}
-
 void ymm_setSessionTimeout(unsigned int sessionTimeoutSeconds)
 {
 	[YMMYandexMetrica setSessionTimeout:(NSUInteger)sessionTimeoutSeconds];
 }
 
-unsigned int ymm_sessionTimeout()
-{
-	return (unsigned int)[YMMYandexMetrica sessionTimeout];
-}
-
-void ymm_setReportsEnabled(bool enabled)
-{
-    [YMMYandexMetrica setReportsEnabled:(BOOL)enabled];
-}
-
-bool ymm_isReportsEnabled()
-{
-    return [YMMYandexMetrica isReportsEnabled];
-}
-
 void ymm_setReportCrashesEnabled(bool enabled)
 {
     [YMMYandexMetrica setReportCrashesEnabled:(BOOL)enabled];
-}
-
-bool ymm_isReportCrashesEnabled()
-{
-    return [YMMYandexMetrica isReportCrashesEnabled];
 }
 
 void ymm_setCustomAppVersion(char *appVersion)
@@ -136,11 +81,6 @@ void ymm_setCustomAppVersion(char *appVersion)
         NSString *appVersionString = [NSString stringWithUTF8String:appVersion];
         [YMMYandexMetrica setCustomAppVersion:appVersionString];
     }
-}
-
-void ymm_setLogLevel(unsigned int level)
-{
-    [YMMYandexMetrica setLogLevel:(NSUInteger)level];
 }
 
 void ymm_setEnvironmentValue(char *key, char *value)

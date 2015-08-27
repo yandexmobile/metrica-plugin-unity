@@ -5,7 +5,6 @@ public class MainSceneManager : MonoBehaviour
 {
 	private GameObject nullGameObject = null;
 
-	private static bool isReportsEnabled = true;
 	private static bool isTrackLocationEnabled = true;
 	private PopUp popupWindow = new PopUp ();
 	private static int counter = 1;
@@ -30,16 +29,9 @@ public class MainSceneManager : MonoBehaviour
 			metrica.ReportEvent(report);
 			popupWindow.showPopup("Report: " + report);
 		}
-		if (Button("Force Send Reports")) {
-			metrica.SendEventsBuffer();
-		}
 		if (Button("Track Location Enabled: " + isTrackLocationEnabled)) {
 			isTrackLocationEnabled = !isTrackLocationEnabled;
 			metrica.TrackLocationEnabled = isTrackLocationEnabled;
-		}
-		if (Button("Reports Enabled: " + isReportsEnabled)) {
-			isReportsEnabled = !isReportsEnabled;
-			metrica.ReportsEnabled = isReportsEnabled;
 		}
 		if (Button("[CRASH] NullReference")) {
 			nullGameObject.SendMessage("");
@@ -61,6 +53,6 @@ public class MainSceneManager : MonoBehaviour
 
 	private bool Button(string title)
 	{
-		return GUILayout.Button(title, GUILayout.Width(Screen.width), GUILayout.Height(Screen.height / 12));
+		return GUILayout.Button(title, GUILayout.Width(Screen.width), GUILayout.Height(Screen.height / 10));
 	}
 }

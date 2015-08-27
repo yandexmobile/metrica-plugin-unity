@@ -9,14 +9,12 @@ public class YandexAppMetricaAndroid : IYandexAppMetrica {
 
 	private AndroidJavaClass metricaClass = null;
 
-	public void StartWithAPIKey (string apiKey)
+	public void ActivateWithAPIKey (string apiKey)
 	{
 		metricaClass = new AndroidJavaClass("com.yandex.metrica.YandexMetrica");
 		using (var activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
 			var playerActivityContext = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-			playerActivityContext.Call("runOnUiThread", new AndroidJavaRunnable(() => {
-				metricaClass.CallStatic("initialize", playerActivityContext, apiKey);
-			}));
+			metricaClass.CallStatic("activate", playerActivityContext, apiKey);
 		}
 	}
 
@@ -39,20 +37,6 @@ public class YandexAppMetricaAndroid : IYandexAppMetrica {
 		if (metricaClass != null) {
 			var throwableObject = new AndroidJavaObject("java.lang.Throwable", "\n" + stackTrace);
 			metricaClass.CallStatic("reportError", condition, throwableObject);
-		}
-	}
-
-	public void SendEventsBuffer ()
-	{
-		if (metricaClass != null) {
-			metricaClass.CallStatic("sendEventsBuffer");
-		}
-	}
-
-	public void StartNewSessionManually ()
-	{
-		if (metricaClass != null) {
-			metricaClass.CallStatic("startNewSessionManually");
 		}
 	}
 
@@ -93,11 +77,6 @@ public class YandexAppMetricaAndroid : IYandexAppMetrica {
 		}
 	}
 	
-	public void SetLogLevel (uint logLevel)
-	{
-		// Not available for Android
-	}
-	
 	public void SetEnvironmentValue (string key, string value)
 	{
 		if (metricaClass != null) {
@@ -106,46 +85,14 @@ public class YandexAppMetricaAndroid : IYandexAppMetrica {
 	}
 
 	public bool TrackLocationEnabled {
-		get {
-			// Not available for Android
-			return false;
-		}
 		set {
 			if (metricaClass != null) {
 				metricaClass.CallStatic("setTrackLocationEnabled", value);
 			}
 		}
 	}
-	
-	public uint DispatchPeriod {
-		get {
-			// Not available for Android
-			return 0;
-		}
-		set {
-			if (metricaClass != null) {
-				metricaClass.CallStatic("setDispatchPeriod", (int)value);
-			}
-		}
-	}
-	
-	public uint MaxReportsCount {
-		get {
-			// Not available for Android
-			return 0;
-		}
-		set {
-			if (metricaClass != null) {
-				metricaClass.CallStatic("setMaxReportsCount", (int)value);
-			}
-		}
-	}
 
 	public uint SessionTimeout {
-		get {
-			// Not available for Android
-			return 0;
-		}
 		set {
 			if (metricaClass != null) {
 				metricaClass.CallStatic("setSessionTimeout", (int)value);
@@ -153,23 +100,7 @@ public class YandexAppMetricaAndroid : IYandexAppMetrica {
 		}
 	}
 	
-	public bool ReportsEnabled {
-		get {
-			// Not available for Android
-			return false;
-		}
-		set {
-			if (metricaClass != null) {
-				metricaClass.CallStatic("setReportsEnabled", value);
-			}
-		}
-	}
-	
 	public bool ReportCrashesEnabled {
-		get {
-			// Not available for Android
-			return false;
-		}
 		set {
 			if (metricaClass != null) {
 				metricaClass.CallStatic("setReportCrashesEnabled", value);

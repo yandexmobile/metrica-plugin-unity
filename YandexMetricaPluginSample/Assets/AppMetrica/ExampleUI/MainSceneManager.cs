@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MainSceneManager : MonoBehaviour 
 {
@@ -31,7 +32,7 @@ public class MainSceneManager : MonoBehaviour
 		}
 		if (Button("Track Location Enabled: " + isTrackLocationEnabled)) {
 			isTrackLocationEnabled = !isTrackLocationEnabled;
-			metrica.TrackLocationEnabled = isTrackLocationEnabled;
+			metrica.SetTrackLocationEnabled(isTrackLocationEnabled);
 		}
 		if (Button("[CRASH] NullReference")) {
 			nullGameObject.SendMessage("");
@@ -43,7 +44,7 @@ public class MainSceneManager : MonoBehaviour
 			popupWindow.showPopup("Level: " + metrica.LibraryApiLevel);
 		}
 		if (Button("[SCENE] Load")) {
-			Application.LoadLevel("AnotherScene");
+			SceneManager.LoadScene("AnotherScene");
 		}
 
 		if (Button("Exit")) {

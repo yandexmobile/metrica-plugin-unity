@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class AnotherSceneManager : MonoBehaviour 
 {
@@ -29,7 +30,7 @@ public class AnotherSceneManager : MonoBehaviour
 		onEnvironmentGUI();
 
 		if (Button("Back To Main Scene")) {
-			Application.LoadLevel("MainScene");
+			SceneManager.LoadScene("MainScene");
 		}
 
 		GUILayout.Label(YMMJSONUtils.JSONEncoder.Encode(map));

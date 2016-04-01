@@ -1,5 +1,5 @@
 /*
- *  YMMVersion.h
+ *  YandexMobileMetrica.h
  *
  * This file is a part of the AppMetrica
  *
@@ -9,13 +9,7 @@
  * You may obtain a copy of the License at http://legal.yandex.com/metrica_termsofuse/
  */
 
-#ifndef __YMM_VERSION_H__
-#define __YMM_VERSION_H__
-
-#define YMM_VERSION_MAJOR 2
-#define YMM_VERSION_MINOR 0
-#define YMM_VERSION_PATCH 0
-
-#define YMM_BUILD_NUMBER 3902
-
-#endif // __YMM_VERSION_H__
+#import <YandexMobileMetrica/YMMYandexMetrica.h>
+#import <YandexMobileMetrica/YMMVersion.h>
+#import <YandexMobileMetrica/YMMYandexMetricaConfiguration.h>
+#import <YandexMobileMetrica/YMMYandexMetricaPreloadInfo.h>

@@ -1,3 +1,8 @@
+// Uncomment the following line to disable location tracking
+// #define APP_METRICA_TRACK_LOCATION_DISABLED
+// or just add APP_METRICA_TRACK_LOCATION_DISABLED into
+// Player Settings -> Other Settings -> Scripting Define Symbols
+
 using UnityEngine;
 using System.Collections;
 
@@ -18,8 +23,13 @@ public class AppMetrica : MonoBehaviour
 	[SerializeField]
 	private uint SessionTimeoutSec = 10;
 
+#if !APP_METRICA_TRACK_LOCATION_DISABLED
 	[SerializeField]
 	private bool TrackLocation = true;
+#endif
+
+	[SerializeField]
+	private bool LoggingEnabled = true;
 	
 	private static bool _isInitialized = false;
 	private ArrayList _handledLogEvents = new ArrayList();
@@ -32,20 +42,17 @@ public class AppMetrica : MonoBehaviour
 		get {
 			if (_metrica == null) {
 				lock (syncRoot) {
-					if (_metrica == null) {
-						if (Application.platform == RuntimePlatform.IPhonePlayer) {
 #if UNITY_IPHONE || UNITY_IOS
-							_metrica = new YandexAppMetricaIOS();
+					if (_metrica == null && Application.platform == RuntimePlatform.IPhonePlayer) {
+						_metrica = new YandexAppMetricaIOS();
+					}
+#elif UNITY_ANDROID
+					if (_metrica == null && Application.platform == RuntimePlatform.Android) {
+						_metrica = new YandexAppMetricaAndroid();
+					}
 #endif
-						} else if (Application.platform == RuntimePlatform.Android) {
-#if UNITY_ANDROID
-							_metrica = new YandexAppMetricaAndroid();
-#endif
-						} 
-
-						if (_metrica == null) {
-							_metrica = new YandexAppMetricaDummy();
-						}
+					if (_metrica == null) {
+						_metrica = new YandexAppMetricaDummy();
 					}
 				}
 			}
@@ -53,15 +60,21 @@ public class AppMetrica : MonoBehaviour
 		}
 	}
 
-	void setupMetrica ()
+	void SetupMetrica ()
 	{
-		Instance.SessionTimeout = SessionTimeoutSec;
-		Instance.TrackLocationEnabled = TrackLocation;
-		Instance.ReportCrashesEnabled = ExceptionsReporting;
-
+		var configuration = new YandexAppMetricaConfig(APIKey) { 
+			SessionTimeout = (int)SessionTimeoutSec,
+			LoggingEnabled = LoggingEnabled,
+		};
+			
+#if !APP_METRICA_TRACK_LOCATION_DISABLED
+		configuration.TrackLocationEnabled = TrackLocation;
 		if (TrackLocation) {
 			Input.location.Start ();
 		}
+#endif
+
+		Instance.ActivateWithConfiguration(configuration);
 	}
 
 	private void Awake ()
@@ -69,7 +82,7 @@ public class AppMetrica : MonoBehaviour
 		if (!_isInitialized) {
 			_isInitialized = true;
 			DontDestroyOnLoad(this.gameObject);
-			Instance.ActivateWithAPIKey(APIKey);
+			SetupMetrica();
 		} else {
 			Destroy(this.gameObject);
 		}
@@ -77,7 +90,6 @@ public class AppMetrica : MonoBehaviour
 
 	private void Start ()
 	{
-		setupMetrica ();
 		Instance.OnResumeApplication();
 	}
 
@@ -117,11 +129,19 @@ public class AppMetrica : MonoBehaviour
 	
 	void Update()
 	{
-		if (_handledLogEvents.Count > 0) {
-			var eventsToReport = (ArrayList)_handledLogEvents.Clone();
-			foreach (LogEvent handledLog in eventsToReport) {
-				Instance.ReportError(handledLog.Condition, handledLog.StackTrace);
-				_handledLogEvents.Remove(handledLog);
+		if (ExceptionsReporting) {
+			if (_handledLogEvents.Count > 0) {
+				var eventsToReport = (ArrayList)_handledLogEvents.Clone();
+				foreach (LogEvent handledLog in eventsToReport) {
+					Instance.ReportError(handledLog.Condition, handledLog.StackTrace);
+					_handledLogEvents.Remove(handledLog);
+				}
+			}
+
+			var reports = CrashReport.reports;
+			foreach (var report in reports) {
+				Instance.ReportError(report.text, string.Format("Time: {0}", report.time));
+				report.Remove();
 			}
 		}
 	}

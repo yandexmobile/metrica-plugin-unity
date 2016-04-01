@@ -3,75 +3,41 @@ using System.Collections;
 
 public class YandexAppMetricaDummy : IYandexAppMetrica {
 
-#region IYandexMobileMetrica implementation
+#region IYandexAppMetrica implementation
 
-	public void ActivateWithAPIKey (string apiKey)
-	{
-	}
+	public void ActivateWithAPIKey (string apiKey) { }
 
-	public void ReportEvent (string message)
-	{
-	}
+	public void ActivateWithConfiguration (YandexAppMetricaConfig config) { }
 
-	public void ReportEvent (string message, Hashtable parameters)
-	{
-	}
+	public void OnResumeApplication () { }
 
-	public void ReportError (string condition, string stackTrace)
-	{
-	}
+	public void OnPauseApplication () { }
 
-	public void OnResumeApplication()
-	{
-	}
-
-	public void OnPauseApplication()
-	{
-	}
-
-	public void SetLocation (LocationInfo locationInfo)
-	{
-	}
+	public void ReportEvent (string message) { }
 	
-	public void SetCustomAppVersion (string appVersion)
-	{
-	}
+	public void ReportEvent (string message, Hashtable parameters) { } 
 	
-	public void SetLogLevel (uint logLevel)
-	{
-	}
+	public void ReportError (string condition, string stackTrace) { }
 	
-	public void SetEnvironmentValue (string key, string value)
-	{
-	}
-
-	public bool TrackLocationEnabled {
-		set {
-		}
-	}
-
-	public uint SessionTimeout {
-		set {
-		}
-	}
+	public void SetTrackLocationEnabled (bool enabled) { }
 	
-	public bool ReportCrashesEnabled {
-		set {
-		}
-	}
-
+	public void SetLocation (Coordinates coordinates) { }
 	
-	public int LibraryApiLevel {
-		get {
-			return 0;
-		}
-	}
+	public void SetSessionTimeout (uint sessionTimeoutSeconds) { }
 	
-	public string LibraryVersion {
-		get {
-			return null;
-		}
-	}
+	public void SetReportCrashesEnabled (bool enabled) { }
+	
+	public void SetCustomAppVersion (string appVersion) { }
+	
+	public void SetLoggingEnabled () { }
+	
+	public void SetEnvironmentValue (string key, string value) { }
+	
+	public bool CollectInstalledApps { get { return false; } set { } }
+	
+	public string LibraryVersion { get { return default(string); } }
+	
+	public int LibraryApiLevel { get { return default(int); } }
 
 #endregion
 

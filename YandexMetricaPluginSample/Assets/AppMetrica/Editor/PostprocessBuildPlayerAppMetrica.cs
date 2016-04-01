@@ -12,7 +12,7 @@ using System.Collections;
 
 public class PostprocessBuildPlayerAppMetrica
 {
-	private static readonly string[] Frameworks = { 
+	private static readonly string[] StrongFrameworks = { 
 		"SystemConfiguration", 
 		"UIKit", 
 		"Foundation", 
@@ -21,6 +21,10 @@ public class PostprocessBuildPlayerAppMetrica
 		"CoreGraphics", 
 		"AdSupport", 
 		"Security"
+	};
+
+	private static readonly string[] WeakFrameworks = { 
+		"SafariServices"
 	};
 
 	private static readonly string[] Libraries = { 
@@ -48,8 +52,11 @@ public class PostprocessBuildPlayerAppMetrica
 			
 			var target = project.TargetGuidByName("Unity-iPhone");
 
-			foreach (var frameworkName in Frameworks) {
+			foreach (var frameworkName in StrongFrameworks) {
 				project.AddFrameworkToProject(target, frameworkName + ".framework", false);
+			}
+			foreach (var frameworkName in WeakFrameworks) {
+				project.AddFrameworkToProject(target, frameworkName + ".framework", true);
 			}
 			foreach (var flag in LDFlags) {
 				project.AddBuildProperty(target, "OTHER_LDFLAGS", flag);

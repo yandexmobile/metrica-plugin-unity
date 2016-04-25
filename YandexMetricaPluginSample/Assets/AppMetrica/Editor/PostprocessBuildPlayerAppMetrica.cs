@@ -12,30 +12,31 @@ using System.Collections;
 
 public class PostprocessBuildPlayerAppMetrica
 {
-	private static readonly string[] StrongFrameworks = { 
-		"SystemConfiguration", 
-		"UIKit", 
-		"Foundation", 
-		"CoreTelephony", 
-		"CoreLocation", 
-		"CoreGraphics", 
-		"AdSupport", 
+	private static readonly string[] StrongFrameworks = {
+		"SystemConfiguration",
+		"UIKit",
+		"Foundation",
+		"CoreTelephony",
+		"CoreLocation",
+		"CoreGraphics",
+		"AdSupport",
 		"Security"
 	};
 
-	private static readonly string[] WeakFrameworks = { 
+	private static readonly string[] WeakFrameworks = {
 		"SafariServices"
 	};
 
-	private static readonly string[] Libraries = { 
-		"z", 
-		"sqlite3"
+	private static readonly string[] Libraries = {
+		"z",
+		"sqlite3",
+		"c++"
 	};
 
-	private static readonly string[] LDFlags = { 
+	private static readonly string[] LDFlags = {
 		"-ObjC"
 	};
-	
+
 	[PostProcessBuild]
 	public static void OnPostprocessBuild(BuildTarget buildTarget, string path)
 	{
@@ -46,10 +47,10 @@ public class PostprocessBuildPlayerAppMetrica
 #endif
 		if (buildTarget == expectedTarget) {
 			var projectPath = path + "/Unity-iPhone.xcodeproj/project.pbxproj";
-			
+
 			var project = new PBXProject();
 			project.ReadFromString(File.ReadAllText(projectPath));
-			
+
 			var target = project.TargetGuidByName("Unity-iPhone");
 
 			foreach (var frameworkName in StrongFrameworks) {
@@ -64,7 +65,7 @@ public class PostprocessBuildPlayerAppMetrica
 			foreach (var libraryName in Libraries) {
 				project.AddBuildProperty(target, "OTHER_LDFLAGS", "-l" + libraryName);
 			}
-			
+
 			File.WriteAllText(projectPath, project.WriteToString());
 		}
 	}

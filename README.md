@@ -8,6 +8,10 @@ Documentation could be found at [metrica official site] [DOCUMENTATION].
 
 ## Changelog
 
+### Version 1.20
+
+* Updated native SDKs *(iOS 2.5.1, Android 2.42)*
+
 ### Version 1.10
 
 * Updated native SDKs *(iOS 2.4.0, Android 2.40)*

@@ -41,16 +41,16 @@ void ymm_activateWithConfigurationJSON(char *configurationJSON)
                                                                  longitude:longitude];
                 }
                 if (configDictionary[@"SessionTimeout"] != nil) {
-                    config.sessionTimeout = (NSUInteger)configDictionary[@"SessionTimeout"];
+                    config.sessionTimeout = [configDictionary[@"SessionTimeout"] unsignedIntegerValue];
                 }
                 if (configDictionary[@"ReportCrashesEnabled"] != nil) {
-                    config.reportCrashesEnabled = (BOOL)configDictionary[@"ReportCrashesEnabled"];
+                    config.reportCrashesEnabled = [configDictionary[@"ReportCrashesEnabled"] boolValue];
                 }
                 if (configDictionary[@"TrackLocationEnabled"] != nil) {
-                    config.trackLocationEnabled = (BOOL)configDictionary[@"TrackLocationEnabled"];
+                    config.trackLocationEnabled = [configDictionary[@"TrackLocationEnabled"] boolValue];
                 }
                 if (configDictionary[@"LoggingEnabled"] != nil) {
-                    config.loggingEnabled = (BOOL)configDictionary[@"LoggingEnabled"];
+                    config.loggingEnabled = [configDictionary[@"LoggingEnabled"] boolValue];
                 }
                 if (configDictionary[@"PreloadInfo"] != nil) {
                     NSDictionary *preloadInfoDictionary = configDictionary[@"PreloadInfo"];

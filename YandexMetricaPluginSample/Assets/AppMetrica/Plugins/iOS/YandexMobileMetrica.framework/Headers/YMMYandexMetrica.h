@@ -3,7 +3,7 @@
  *
  * This file is a part of the AppMetrica
  *
- * Version for iOS © 2015 YANDEX
+ * Version for iOS © 2016 YANDEX
  *
  * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://legal.yandex.com/metrica_termsofuse/
@@ -13,6 +13,8 @@
 
 @class CLLocation;
 @class YMMYandexMetricaConfiguration;
+
+NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kYMMYandexMetricaErrorDomain;
 
@@ -47,7 +49,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
  */
 + (void)reportEvent:(NSString *)message
-          onFailure:(void (^)(NSError *error))onFailure;
+          onFailure:(nullable void (^)(NSError *error))onFailure;
 
 /** Reporting custom event with additional parameters.
 
@@ -56,8 +58,8 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
  */
 + (void)reportEvent:(NSString *)message
-         parameters:(NSDictionary *)params
-          onFailure:(void (^)(NSError *error))onFailure;
+         parameters:(nullable NSDictionary *)params
+          onFailure:(nullable void (^)(NSError *error))onFailure;
 
 /** Reporting custom error messages.
 
@@ -66,11 +68,10 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
  */
 + (void)reportError:(NSString *)message
-          exception:(NSException *)exception
-          onFailure:(void (^)(NSError *error))onFailure;
+          exception:(nullable NSException *)exception
+          onFailure:(nullable void (^)(NSError *error))onFailure;
 
-/**
- Enable/disable location reporting to AppMetrica.
+/** Enable/disable location reporting to AppMetrica.
  If enabled and location set via setLocation: method - that location would be used.
  If enabled and location is not set via setLocation,
  but application has appropriate permission - CLLocationManager would be used to acquire location data.
@@ -85,7 +86,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  
  @param location Custom device location to be reported.
  */
-+ (void)setLocation:(CLLocation *)location;
++ (void)setLocation:(nullable CLLocation *)location;
 
 /** Setting session timeout (in seconds).
 
@@ -117,12 +118,12 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 + (void)setLoggingEnabled:(BOOL)isEnabled;
 
 /** Setting key - value data to be used as additional information, associated with future unhandled exception.
- If value is nil previously set key-value is removed, does nothing if key hasn't been added.
+ If value is nil, previously set key-value is removed. Does nothing if key hasn't been added.
 
  @param value The error environment value.
  @param key The error environment key.
  */
-+ (void)setEnvironmentValue:(NSString *)value forKey:(NSString *)key;
++ (void)setEnvironmentValue:(nullable NSString *)value forKey:(NSString *)key;
 
 /** Retrieves current version of library.
  */
@@ -134,11 +135,13 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  */
 + (BOOL)enableTrackingWithURLScheme:(NSURL *)urlScheme NS_EXTENSION_UNAVAILABLE_IOS("") NS_AVAILABLE_IOS(9_0);
 
-/** Reads the URL that has opened the application to search for an AppMetrica deep link.
+/** Handles the URL that has opened the application.
+ Reports the URL for deep links tracking.
+ URL scheme should be registered beforehand via `enableTrackingWithUrlScheme:` method for tracking to work correctly.
 
- @param url URL that has opened the application. URL scheme should be registered beforehand via `enableTrackingWithUrlScheme` method.
+ @param url URL that has opened the application.
  */
-+ (BOOL)handleOpenURL:(NSURL *)url NS_EXTENSION_UNAVAILABLE_IOS("") NS_AVAILABLE_IOS(9_0);
++ (BOOL)handleOpenURL:(NSURL *)url;
 
 @end
 
@@ -149,3 +152,5 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
                                "Use activateWithApiKey: with updated key. More info in activateWithApiKey:'s description")));
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -1,12 +1,18 @@
-#AppMetrica - Unity Plugin
+# AppMetrica - Unity Plugin
 
 ## License
-License agreement on use of Yandex AppMetrica for Apps SDK is available at [EULA site] [LICENSE].
+License agreement on use of Yandex AppMetrica SDK is available at [EULA site] [LICENSE].
 
 ## Documentation
-Documentation could be found at [metrica official site] [DOCUMENTATION].
+Documentation could be found at [AppMetrica official site] [DOCUMENTATION].
 
 ## Changelog
+
+### Version 2.0.0
+
+* Updated native SDKs *(iOS 2.7.0, Android 2.62)*
+* Fixed plugin files structure: everything moved into `Assets/AppMetrica`
+* Added method for activation configuration updates handling *(for AppMetrica Push SDK Unity Plugin)*
 
 ### Version 1.20
 

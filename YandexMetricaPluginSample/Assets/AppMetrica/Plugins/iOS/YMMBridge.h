@@ -2,6 +2,7 @@
 
 void ymm_activateWithAPIKey(char *apiKey);
 void ymm_activateWithConfigurationJSON(char *configurationJSON);
+bool ymm_isAppMetricaActivated();
 
 void ymm_reportEvent(char *message);
 void ymm_reportEventWithParameters(char *message, char *parameters);

@@ -1,44 +1,74 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class YandexAppMetricaDummy : IYandexAppMetrica {
+public class YandexAppMetricaDummy : BaseYandexAppMetrica
+{
 
-#region IYandexAppMetrica implementation
+    #region IYandexAppMetrica implementation
 
-	public void ActivateWithAPIKey (string apiKey) { }
+    public override void ActivateWithAPIKey (string apiKey)
+    {
+    }
 
-	public void ActivateWithConfiguration (YandexAppMetricaConfig config) { }
+    public override void ActivateWithConfiguration (YandexAppMetricaConfig config)
+    {
+    }
 
-	public void OnResumeApplication () { }
+    public override void OnResumeApplication ()
+    {
+    }
 
-	public void OnPauseApplication () { }
+    public override void OnPauseApplication ()
+    {
+    }
 
-	public void ReportEvent (string message) { }
-	
-	public void ReportEvent (string message, Hashtable parameters) { } 
-	
-	public void ReportError (string condition, string stackTrace) { }
-	
-	public void SetTrackLocationEnabled (bool enabled) { }
-	
-	public void SetLocation (Coordinates coordinates) { }
-	
-	public void SetSessionTimeout (uint sessionTimeoutSeconds) { }
-	
-	public void SetReportCrashesEnabled (bool enabled) { }
-	
-	public void SetCustomAppVersion (string appVersion) { }
-	
-	public void SetLoggingEnabled () { }
-	
-	public void SetEnvironmentValue (string key, string value) { }
-	
-	public bool CollectInstalledApps { get { return false; } set { } }
-	
-	public string LibraryVersion { get { return default(string); } }
-	
-	public int LibraryApiLevel { get { return default(int); } }
+    public override void ReportEvent (string message)
+    {
+    }
 
-#endregion
+    public override void ReportEvent (string message, Dictionary<string, object> parameters)
+    {
+    }
+
+    public override void ReportError (string condition, string stackTrace)
+    {
+    }
+
+    public override void SetTrackLocationEnabled (bool enabled)
+    {
+    }
+
+    public override void SetLocation (YandexAppMetricaConfig.Coordinates coordinates)
+    {
+    }
+
+    public override void SetSessionTimeout (uint sessionTimeoutSeconds)
+    {
+    }
+
+    public override void SetReportCrashesEnabled (bool enabled)
+    {
+    }
+
+    public override void SetCustomAppVersion (string appVersion)
+    {
+    }
+
+    public override void SetLoggingEnabled ()
+    {
+    }
+
+    public override void SetEnvironmentValue (string key, string value)
+    {
+    }
+
+    public override bool CollectInstalledApps { get { return false; } set { } }
+
+    public override string LibraryVersion { get { return default(string); } }
+
+    public override int LibraryApiLevel { get { return default(int); } }
+
+    #endregion
 
 }

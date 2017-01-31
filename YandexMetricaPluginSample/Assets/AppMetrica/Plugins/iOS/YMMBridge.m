@@ -5,12 +5,67 @@
 
 static NSString *const kYMMUnityExceptionName = @"UnityException";
 
+static bool *g_ymm_isAppMetricaActivated = false;
+
 void ymm_activateWithAPIKey(char *apiKey)
 {
     if (apiKey != NULL) {
         NSString *apiKeyString = [NSString stringWithUTF8String:apiKey];
-        [YMMYandexMetrica activateWithApiKey:apiKeyString];
+        if (apiKeyString.length > 0) {
+            [YMMYandexMetrica activateWithApiKey:apiKeyString];
+            g_ymm_isAppMetricaActivated = true;
+        }
+        else {
+            NSLog(@"AppMetrica could not be activated with an empty API key.");
+        }
     }
+}
+
+YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *configDictionary)
+{
+    YMMYandexMetricaConfiguration *config =
+    [[YMMYandexMetricaConfiguration alloc] initWithApiKey:configDictionary[@"ApiKey"]];
+
+    if (configDictionary[@"AppVersion"] != nil) {
+        config.customAppVersion = (NSString *)configDictionary[@"AppVersion"];
+    }
+    if (configDictionary[@"Location"] != nil) {
+        NSDictionary *locationDictionary = configDictionary[@"Location"];
+        CLLocationDegrees latitude = [locationDictionary[@"Latitude"] doubleValue],
+        longitude = [locationDictionary[@"Longitude"] doubleValue];
+        config.location = [[CLLocation alloc] initWithLatitude:latitude
+                                                     longitude:longitude];
+    }
+    if (configDictionary[@"SessionTimeout"] != nil) {
+        config.sessionTimeout = [configDictionary[@"SessionTimeout"] unsignedIntegerValue];
+    }
+    if (configDictionary[@"ReportCrashesEnabled"] != nil) {
+        config.reportCrashesEnabled = [configDictionary[@"ReportCrashesEnabled"] boolValue];
+    }
+    if (configDictionary[@"TrackLocationEnabled"] != nil) {
+        config.trackLocationEnabled = [configDictionary[@"TrackLocationEnabled"] boolValue];
+    }
+    if (configDictionary[@"LoggingEnabled"] != nil) {
+        config.loggingEnabled = [configDictionary[@"LoggingEnabled"] boolValue];
+    }
+    if (configDictionary[@"HandleFirstActivationAsUpdateEnabled"] != nil) {
+        config.handleFirstActivationAsUpdateEnabled = [configDictionary[@"HandleFirstActivationAsUpdateEnabled"] boolValue];
+    }
+    if (configDictionary[@"PreloadInfo"] != nil) {
+        NSDictionary *preloadInfoDictionary = configDictionary[@"PreloadInfo"];
+        NSString *trackingID = preloadInfoDictionary[@"TrackingId"];
+        YMMYandexMetricaPreloadInfo *preloadInfo =
+        [[YMMYandexMetricaPreloadInfo alloc] initWithTrackingIdentifier:trackingID];
+
+        NSDictionary *additionalInfo = preloadInfoDictionary[@"AdditionalInfo"];
+        for (NSString *key in additionalInfo) {
+            [preloadInfo setAdditionalInfo:additionalInfo[key] forKey:key];
+        }
+
+        config.preloadInfo = preloadInfo;
+    }
+
+    return config;
 }
 
 void ymm_activateWithConfigurationJSON(char *configurationJSON)
@@ -26,50 +81,21 @@ void ymm_activateWithConfigurationJSON(char *configurationJSON)
 
         if (error == nil && [configDictionary isKindOfClass:[NSDictionary class]]) {
             NSString *apiKey = configDictionary[@"ApiKey"];
-            if (apiKey != nil) {
-                YMMYandexMetricaConfiguration *config =
-                    [[YMMYandexMetricaConfiguration alloc] initWithApiKey:apiKey];
-
-                if (configDictionary[@"AppVersion"] != nil) {
-                    config.customAppVersion = (NSString *)configDictionary[@"AppVersion"];
-                }
-                if (configDictionary[@"Location"] != nil) {
-                    NSDictionary *locationDictionary = configDictionary[@"Location"];
-                    CLLocationDegrees latitude = [locationDictionary[@"Latitude"] doubleValue],
-                        longitude = [locationDictionary[@"Longitude"] doubleValue];
-                    config.location = [[CLLocation alloc] initWithLatitude:latitude
-                                                                 longitude:longitude];
-                }
-                if (configDictionary[@"SessionTimeout"] != nil) {
-                    config.sessionTimeout = [configDictionary[@"SessionTimeout"] unsignedIntegerValue];
-                }
-                if (configDictionary[@"ReportCrashesEnabled"] != nil) {
-                    config.reportCrashesEnabled = [configDictionary[@"ReportCrashesEnabled"] boolValue];
-                }
-                if (configDictionary[@"TrackLocationEnabled"] != nil) {
-                    config.trackLocationEnabled = [configDictionary[@"TrackLocationEnabled"] boolValue];
-                }
-                if (configDictionary[@"LoggingEnabled"] != nil) {
-                    config.loggingEnabled = [configDictionary[@"LoggingEnabled"] boolValue];
-                }
-                if (configDictionary[@"PreloadInfo"] != nil) {
-                    NSDictionary *preloadInfoDictionary = configDictionary[@"PreloadInfo"];
-                    NSString *trackingID = preloadInfoDictionary[@"TrackingId"];
-                    YMMYandexMetricaPreloadInfo *preloadInfo =
-                        [[YMMYandexMetricaPreloadInfo alloc] initWithTrackingIdentifier:trackingID];
-
-                    NSDictionary *additionalInfo = preloadInfoDictionary[@"AdditionalInfo"];
-                    for (NSString *key in additionalInfo) {
-                        [preloadInfo setAdditionalInfo:additionalInfo[key] forKey:key];
-                    }
-
-                    config.preloadInfo = preloadInfo;
-                }
-
+            if (apiKey.length > 0) {
+                YMMYandexMetricaConfiguration *config = ymm_configurationFromDictionary(configDictionary);
                 [YMMYandexMetrica activateWithConfiguration:config];
+                g_ymm_isAppMetricaActivated = true;
+            }
+            else {
+                NSLog(@"AppMetrica could not be activated with an empty API key.");
             }
         }
     }
+}
+
+bool ymm_isAppMetricaActivated()
+{
+    return g_ymm_isAppMetricaActivated;
 }
 
 void ymm_reportEvent(char *message)

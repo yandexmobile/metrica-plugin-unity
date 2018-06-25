@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,164 +14,105 @@ using System.Collections.Generic;
 
 public class YandexAppMetricaAndroid : BaseYandexAppMetrica
 {
+    
+    #region IYandexAppMetrica implementation
 
-
-#region IYandexAppMetrica implementation
-
-    private AndroidJavaClass metricaClass = null;
-
-    public override void ActivateWithAPIKey (string apiKey)
-    {
-        base.ActivateWithAPIKey (apiKey);
-        metricaClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetrica");
-        using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
-            var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-            metricaClass.CallStatic ("activate", playerActivityContext, apiKey);
-        }
-    }
+    private readonly AndroidJavaClass metricaClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetrica");
 
     public override void ActivateWithConfiguration (YandexAppMetricaConfig config)
     {
         base.ActivateWithConfiguration (config);
-        metricaClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetrica");
         using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
             var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-            metricaClass.CallStatic ("activate", playerActivityContext, config.ToAndroidAppMetricaConfig (metricaClass));
+            metricaClass.CallStatic ("activate", playerActivityContext, config.ToAndroidAppMetricaConfig ());
         }
     }
 
-    public override void OnResumeApplication ()
+    public override void ResumeSession ()
     {
-        if (metricaClass != null) {
-            using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
-                var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-                metricaClass.CallStatic ("onResumeActivity", playerActivityContext);
-            }
+        using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
+            var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
+            metricaClass.CallStatic ("resumeSession", playerActivityContext);
         }
     }
 
-    public override void OnPauseApplication ()
+    public override void PauseSession ()
     {
-        if (metricaClass != null) {
-            using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
-                var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-                metricaClass.CallStatic ("onPauseActivity", playerActivityContext);
-            }
+        using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
+            var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
+            metricaClass.CallStatic ("pauseSession", playerActivityContext);
         }
     }
 
     public override void ReportEvent (string message)
     {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("reportEvent", message);
-        }
+        metricaClass.CallStatic ("reportEvent", message);
     }
 
     public override void ReportEvent (string message, Dictionary<string, object> parameters)
     {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("reportEvent", message, YMMJSONUtils.JSONEncoder.Encode (parameters));
-        }
+        metricaClass.CallStatic ("reportEvent", message, JsonStringFromDictionary (parameters));
     }
 
     public override void ReportError (string condition, string stackTrace)
     {
-        if (metricaClass != null) {
-            var throwableObject = new AndroidJavaObject ("java.lang.Throwable", "\n" + stackTrace);
-            metricaClass.CallStatic ("reportError", condition, throwableObject);
-        }
+        var throwableObject = new AndroidJavaObject ("java.lang.Throwable", "\n" + stackTrace);
+        metricaClass.CallStatic ("reportError", condition, throwableObject);
     }
 
-    public override void SetTrackLocationEnabled (bool enabled)
+    public override void SetLocationTracking (bool enabled)
     {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setTrackLocationEnabled", enabled);
-        }
+        metricaClass.CallStatic ("setLocationTracking", enabled);
     }
 
-    public override void SetLocation (YandexAppMetricaConfig.Coordinates coordinates)
+    public override void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates)
     {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setLocation", coordinates.ToAndroidLocation ());
-        }
-    }
-
-    public override void SetSessionTimeout (uint sessionTimeoutSeconds)
-    {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setSessionTimeout", (int)sessionTimeoutSeconds);
-        }
-    }
-
-    public override void SetReportCrashesEnabled (bool enabled)
-    {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setReportCrashesEnabled", enabled);
-        }
-    }
-
-    public override void SetCustomAppVersion (string appVersion)
-    {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setCustomAppVersion", appVersion);
-        }
-    }
-
-    public override void SetLoggingEnabled ()
-    {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setLoggingEnabled");
-        }
-    }
-
-    public override void SetEnvironmentValue (string key, string value)
-    {
-        if (metricaClass != null) {
-            metricaClass.CallStatic ("setEnvironmentValue", key, value);
-        }
-    }
-
-    public override bool CollectInstalledApps {
-        get {
-            if (metricaClass != null) {
-                return metricaClass.CallStatic<bool> ("getCollectInstalledApps");
-            }
-            return false;
-        }
-        set {
-            if (metricaClass != null) {
-                metricaClass.CallStatic ("setCollectInstalledApps", value);
-            }
+        if (coordinates.HasValue) {
+            metricaClass.CallStatic ("setLocation", coordinates.Value.ToAndroidLocation ());
+        } else {
+            metricaClass.CallStatic ("setLocation", null);
         }
     }
 
     public override int LibraryApiLevel {
         get {
-            if (metricaClass != null) {
-                return metricaClass.CallStatic<int> ("getLibraryApiLevel");
-            }
-            return 0;
+            return metricaClass.CallStatic<int> ("getLibraryApiLevel");
         }
     }
 
     public override string LibraryVersion {
         get {
-            if (metricaClass != null) {
-                return metricaClass.CallStatic<string> ("getLibraryVersion");
-            }
-            return null;
+            return metricaClass.CallStatic<string> ("getLibraryVersion");
         }
     }
 
+    public override void SetUserProfileID (string userProfileID)
+    {
+        metricaClass.CallStatic ("setUserProfileID", userProfileID);
+    }
 
+    public override void ReportUserProfile (YandexAppMetricaUserProfile userProfile)
+    {
+        metricaClass.CallStatic ("reportUserProfile", userProfile.ToAndroidUserProfile ());
+    }
 
-#endregion
+    public override void ReportRevenue (YandexAppMetricaRevenue revenue)
+    {
+        metricaClass.CallStatic ("reportRevenue", revenue.ToAndroidRevenue ());
+    }
+
+    #endregion
+
+    private string JsonStringFromDictionary (IDictionary dictionary)
+    {
+        return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
+    }
 
 }
 
 public static class YandexAppMetricaExtensionsAndroid
 {
-    public static AndroidJavaObject ToAndroidAppMetricaConfig (this YandexAppMetricaConfig self, AndroidJavaClass metricaClass)
+    public static AndroidJavaObject ToAndroidAppMetricaConfig (this YandexAppMetricaConfig self)
     {
         AndroidJavaObject appMetricaConfig = null;
         using (var configClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetricaConfig")) {
@@ -171,28 +120,28 @@ public static class YandexAppMetricaExtensionsAndroid
 
             if (self.Location.HasValue) {
                 var location = self.Location.Value;
-                builder.Call<AndroidJavaObject> ("setLocation", location.ToAndroidLocation ());
+                builder.Call<AndroidJavaObject> ("withLocation", location.ToAndroidLocation ());
             }
             if (self.AppVersion != null) {
-                builder.Call<AndroidJavaObject> ("setAppVersion", self.AppVersion);
+                builder.Call<AndroidJavaObject> ("withAppVersion", self.AppVersion);
             }
-            if (self.TrackLocationEnabled.HasValue) {
-                builder.Call<AndroidJavaObject> ("setTrackLocationEnabled", self.TrackLocationEnabled.Value);
+            if (self.LocationTracking.HasValue) {
+                builder.Call<AndroidJavaObject> ("withLocationTracking", self.LocationTracking.Value);
             }
             if (self.SessionTimeout.HasValue) {
-                builder.Call<AndroidJavaObject> ("setSessionTimeout", self.SessionTimeout.Value);
+                builder.Call<AndroidJavaObject> ("withSessionTimeout", self.SessionTimeout.Value);
             }
-            if (self.ReportCrashesEnabled.HasValue) {
-                builder.Call<AndroidJavaObject> ("setReportCrashesEnabled", self.ReportCrashesEnabled.Value);
+            if (self.CrashReporting.HasValue) {
+                builder.Call<AndroidJavaObject> ("withCrashReporting", self.CrashReporting.Value);
             }
-            if (self.LoggingEnabled ?? false) {
-                builder.Call<AndroidJavaObject> ("setLogEnabled");
+            if (self.Logs ?? false) {
+                builder.Call<AndroidJavaObject> ("withLogs");
             }
-            if (self.CollectInstalledApps.HasValue) {
-                builder.Call<AndroidJavaObject> ("setCollectInstalledApps", self.CollectInstalledApps.Value);
+            if (self.InstalledAppCollecting.HasValue) {
+                builder.Call<AndroidJavaObject> ("withInstalledAppCollecting", self.InstalledAppCollecting.Value);
             }
-            if (self.HandleFirstActivationAsUpdateEnabled.HasValue) {
-                builder.Call<AndroidJavaObject> ("handleFirstActivationAsUpdate", self.HandleFirstActivationAsUpdateEnabled.Value);
+            if (self.HandleFirstActivationAsUpdate.HasValue) {
+                builder.Call<AndroidJavaObject> ("handleFirstActivationAsUpdate", self.HandleFirstActivationAsUpdate.Value);
             }
             if (self.PreloadInfo.HasValue) {
                 var preloadInfo = self.PreloadInfo.Value;
@@ -201,11 +150,11 @@ public static class YandexAppMetricaExtensionsAndroid
                 foreach (var kvp in preloadInfo.AdditionalInfo) {
                     preloadInfoBuilder.Call<AndroidJavaObject> ("setAdditionalParams", kvp.Key, kvp.Value);
                 }
-                builder.Call<AndroidJavaObject> ("setPreloadInfo", preloadInfoBuilder.Call<AndroidJavaObject> ("build"));
+                builder.Call<AndroidJavaObject> ("withPreloadInfo", preloadInfoBuilder.Call<AndroidJavaObject> ("build"));
             }
 
             // Native crashes are currently not supported
-            builder.Call<AndroidJavaObject> ("setReportNativeCrashesEnabled", false);
+            builder.Call<AndroidJavaObject> ("withNativeCrashReporting", false);
             appMetricaConfig = builder.Call<AndroidJavaObject> ("build");
         }
         return appMetricaConfig;
@@ -217,6 +166,99 @@ public static class YandexAppMetricaExtensionsAndroid
         location.Call ("setLatitude", self.Latitude);
         location.Call ("setLongitude", self.Longitude);
         return location;
+    }
+
+    public static AndroidJavaObject ToAndroidGender (this string self)
+    {
+        AndroidJavaObject gender = null;
+        if (self != null) {
+            using (var genderClass = new AndroidJavaClass ("com.yandex.metrica.profile.GenderAttribute$Gender")) {
+                gender = genderClass.GetStatic<AndroidJavaObject> (self);
+            }
+        }
+        return gender;
+    }
+
+    public static AndroidJavaObject ToAndroidUserProfileUpdate (this YandexAppMetricaUserProfileUpdate self)
+    {
+        AndroidJavaObject userProfileUpdate = null;
+        AndroidJavaObject attribute = null;
+        using (var attributeClass = new AndroidJavaClass ("com.yandex.metrica.profile.Attribute")) {
+            if (self.Key != null) {
+                attribute = attributeClass.CallStatic<AndroidJavaObject> (self.AttributeName, self.Key);
+            }
+            else {
+                attribute = attributeClass.CallStatic<AndroidJavaObject> (self.AttributeName);
+            }
+        }
+        if (self.AttributeName == "gender" && self.Values.Length > 0) {
+            self.Values[0] = (self.Values[0] as string).ToAndroidGender ();
+        }
+        userProfileUpdate = attribute.Call<AndroidJavaObject> (self.MethodName, self.Values);
+        return userProfileUpdate;
+    }
+
+    public static AndroidJavaObject ToAndroidUserProfile (this YandexAppMetricaUserProfile self)
+    {
+        AndroidJavaObject userProfile = null;
+        if (self != null) {
+            using (var userProfileClass = new AndroidJavaClass ("com.yandex.metrica.profile.UserProfile")) {
+                var builder = userProfileClass.CallStatic<AndroidJavaObject> ("newBuilder");
+                List<YandexAppMetricaUserProfileUpdate> updates = self.GetUserProfileUpdates ();
+                foreach (var userProfileUpdate in updates) {
+                    builder.Call<AndroidJavaObject> ("apply", userProfileUpdate.ToAndroidUserProfileUpdate ());
+                }
+                userProfile = builder.Call<AndroidJavaObject> ("build");
+            }
+        }
+        return userProfile;
+    }
+
+    public static AndroidJavaObject ToAndroidReceipt (this YandexAppMetricaReceipt? self) {
+        AndroidJavaObject receipt = null;
+        if (self.HasValue) {
+            using (var receiptClass = new AndroidJavaClass ("com.yandex.metrica.Revenue$Receipt")) {
+                var builder = receiptClass.CallStatic<AndroidJavaObject> ("newBuilder");
+                builder.Call<AndroidJavaObject> ("withData", self.Value.Data);
+                builder.Call<AndroidJavaObject> ("withSignature", self.Value.Signature);
+                receipt = builder.Call<AndroidJavaObject> ("build");
+            }
+        }
+        return receipt;
+    }
+
+    public static AndroidJavaObject ToAndroidInteger (this int? self) {
+        AndroidJavaObject integer = null;
+        if (self.HasValue) {
+            using (var integerClass = new AndroidJavaClass ("java.lang.Integer")) {
+                integer = integerClass.CallStatic<AndroidJavaObject> ("valueOf", self);
+            }
+        }
+        return integer;
+    }
+
+    public static AndroidJavaObject ToAndroidCurrency (this string self) {
+        AndroidJavaObject currency = null;
+        if (self != null) {
+            using (var currencyClass = new AndroidJavaClass ("java.util.Currency")) {
+                currency = currencyClass.CallStatic<AndroidJavaObject> ("getInstance", self);
+            }
+        }
+        return currency;
+    }
+
+    public static AndroidJavaObject ToAndroidRevenue (this YandexAppMetricaRevenue self) 
+    {
+        AndroidJavaObject revenue = null;
+        using (var revenueClass = new AndroidJavaClass ("com.yandex.metrica.Revenue")) {
+            var builder = revenueClass.CallStatic<AndroidJavaObject> ("newBuilder", self.Price, self.Currency.ToAndroidCurrency ());
+            builder.Call<AndroidJavaObject> ("withQuantity", self.Quantity.ToAndroidInteger ());
+            builder.Call<AndroidJavaObject> ("withProductID", self.ProductID);
+            builder.Call<AndroidJavaObject> ("withPayload", self.Payload);
+            builder.Call<AndroidJavaObject> ("withReceipt", self.Receipt.ToAndroidReceipt ());
+            revenue = builder.Call<AndroidJavaObject> ("build");
+        }
+        return revenue;
     }
 }
 

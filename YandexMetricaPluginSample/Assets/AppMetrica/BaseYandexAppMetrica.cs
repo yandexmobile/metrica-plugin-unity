@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,11 +20,6 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
         get {
             return _metricaConfig;
         }
-    }
-
-    public virtual void ActivateWithAPIKey (string apiKey)
-    {
-        UpdateConfiguration (new YandexAppMetricaConfig (apiKey));
     }
 
     public virtual void ActivateWithConfiguration (YandexAppMetricaConfig config)
@@ -33,9 +36,9 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
         }
     }
 
-    public abstract void OnResumeApplication ();
+    public abstract void ResumeSession ();
 
-    public abstract void OnPauseApplication ();
+    public abstract void PauseSession ();
 
     public abstract void ReportEvent (string message);
 
@@ -43,24 +46,17 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
 
     public abstract void ReportError (string condition, string stackTrace);
 
-    public abstract void SetTrackLocationEnabled (bool enabled);
+    public abstract void SetLocationTracking (bool enabled);
 
-    public abstract void SetLocation (YandexAppMetricaConfig.Coordinates coordinates);
-
-    public abstract void SetSessionTimeout (uint sessionTimeoutSeconds);
-
-    public abstract void SetReportCrashesEnabled (bool enabled);
-
-    public abstract void SetCustomAppVersion (string appVersion);
-
-    public abstract void SetLoggingEnabled ();
-
-    public abstract void SetEnvironmentValue (string key, string value);
-
-    public abstract bool CollectInstalledApps { get; set; }
+    public abstract void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates);
 
     public abstract string LibraryVersion { get; }
 
     public abstract int LibraryApiLevel { get; }
 
+    public abstract void SetUserProfileID (string userProfileID);
+
+    public abstract void ReportUserProfile (YandexAppMetricaUserProfile userProfile);
+
+    public abstract void ReportRevenue (YandexAppMetricaRevenue revenue);
 }

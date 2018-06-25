@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +17,8 @@ public class AnotherSceneManager : MonoBehaviour
     private const string DEFAULT_EVENT = "test event";
     private const string DEFAULT_KEY = "key";
     private const string DEFAULT_VALUE = "value";
-    private const string DEFAULT_ENVIRONMENT = "environment";
 
     private static string eventValue = DEFAULT_EVENT;
-    private static string environmentValue = DEFAULT_ENVIRONMENT;
     private Dictionary<string, object> eventParameters = new Dictionary<string, object> ();
     private string key = DEFAULT_KEY;
     private string value = DEFAULT_VALUE;
@@ -27,7 +33,6 @@ public class AnotherSceneManager : MonoBehaviour
 
         onCustomEventGUI ();
         onParamsGUI ();
-        onEnvironmentGUI ();
 
         if (Button ("Back To Main Scene")) {
             SceneManager.LoadScene ("MainScene");
@@ -67,15 +72,6 @@ public class AnotherSceneManager : MonoBehaviour
             AppMetrica.Instance.ReportEvent (eventValue, eventParameters);
             popupWindow.showPopup ("Report with params");
             eventParameters.Clear ();
-        }
-    }
-
-    void onEnvironmentGUI ()
-    {
-        environmentValue = GUILayout.TextField (environmentValue);
-        if (Button ("Set crash environment")) {
-            AppMetrica.Instance.SetEnvironmentValue (DEFAULT_ENVIRONMENT, environmentValue);
-            environmentValue = DEFAULT_ENVIRONMENT;
         }
     }
 }

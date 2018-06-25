@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -7,9 +15,6 @@ using System.Runtime.InteropServices;
 
 public class YandexAppMetricaIOS : BaseYandexAppMetrica
 {
-    [DllImport ("__Internal")]
-    private static extern void ymm_activateWithAPIKey (string apiKey);
-
     [DllImport ("__Internal")]
     private static extern void ymm_activateWithConfigurationJSON (string configurationJSON);
 
@@ -23,49 +28,40 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     private static extern void ymm_reportError (string condition, string stackTrace);
 
     [DllImport ("__Internal")]
-    private static extern void ymm_setTrackLocationEnabled (bool enabled);
+    private static extern void ymm_setLocationTracking (bool enabled);
 
     [DllImport ("__Internal")]
     private static extern void ymm_setLocation (double latitude, double longitude);
 
     [DllImport ("__Internal")]
-    private static extern void ymm_setSessionTimeout (uint sessionTimeoutSeconds);
-
-    [DllImport ("__Internal")]
-    private static extern void ymm_setReportCrashesEnabled (bool enabled);
-
-    [DllImport ("__Internal")]
-    private static extern void ymm_setCustomAppVersion (string appVersion);
-
-    [DllImport ("__Internal")]
-    private static extern void ymm_setLoggingEnabled (bool enabled);
-
-    [DllImport ("__Internal")]
-    private static extern void ymm_setEnvironmentValue (string key, string value);
+    private static extern void ymm_resetLocation ();
 
     [DllImport ("__Internal")]
     private static extern string ymm_getLibraryVersion ();
 
-    #region IYandexAppMetrica implementation
+    [DllImport ("__Internal")]
+    private static extern void ymm_setUserProfileID (string userProfileID);
 
-    public override void ActivateWithAPIKey (string apiKey)
-    {
-        base.ActivateWithAPIKey (apiKey);
-        ymm_activateWithAPIKey (apiKey);
-    }
+    [DllImport ("__Internal")]
+    private static extern void ymm_reportUsertProfileJSON (string userProfileJSON);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_reportRevenueJSON (string revenueJSON);
+
+    #region IYandexAppMetrica implementation
 
     public override void ActivateWithConfiguration (YandexAppMetricaConfig config)
     {
         base.ActivateWithConfiguration (config);
-        ymm_activateWithConfigurationJSON (YMMJSONUtils.JSONEncoder.Encode (config.ToHashtable ()));
+        ymm_activateWithConfigurationJSON (JsonStringFromDictionary (config.ToHashtable ()));
     }
 
-    public override void OnResumeApplication ()
+    public override void ResumeSession ()
     {
         // It does nothing for iOS
     }
 
-    public override void OnPauseApplication ()
+    public override void PauseSession ()
     {
         // It does nothing for iOS
     }
@@ -77,7 +73,7 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     public override void ReportEvent (string message, Dictionary<string, object> parameters)
     {
-        ymm_reportEventWithParameters (message, YMMJSONUtils.JSONEncoder.Encode (parameters));
+        ymm_reportEventWithParameters (message, JsonStringFromDictionary (parameters));
     }
 
     public override void ReportError (string condition, string stackTrace)
@@ -85,48 +81,17 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
         ymm_reportError (condition, stackTrace);
     }
 
-    public override void SetTrackLocationEnabled (bool enabled)
+    public override void SetLocationTracking (bool enabled)
     {
-        ymm_setTrackLocationEnabled (enabled);
+        ymm_setLocationTracking (enabled);
     }
 
-    public override void SetLocation (YandexAppMetricaConfig.Coordinates coordinates)
+    public override void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates)
     {
-        ymm_setLocation (coordinates.Latitude, coordinates.Longitude);
-    }
-
-    public override void SetSessionTimeout (uint sessionTimeoutSeconds)
-    {
-        ymm_setSessionTimeout (sessionTimeoutSeconds);
-    }
-
-    public override void SetReportCrashesEnabled (bool enabled)
-    {
-        ymm_setReportCrashesEnabled (enabled);
-    }
-
-    public override void SetCustomAppVersion (string appVersion)
-    {
-        ymm_setCustomAppVersion (appVersion);
-    }
-
-    public override void SetLoggingEnabled ()
-    {
-        ymm_setLoggingEnabled (true);
-    }
-
-    public override void SetEnvironmentValue (string key, string value)
-    {
-        ymm_setEnvironmentValue (key, value);
-    }
-
-    public override bool CollectInstalledApps {
-        get {
-            // Not available for iOS
-            return false;
-        }
-        set {
-            // Not available for iOS
+        if (coordinates.HasValue) {
+            ymm_setLocation (coordinates.Value.Latitude, coordinates.Value.Longitude);
+        } else {
+            ymm_resetLocation ();
         }
     }
 
@@ -143,8 +108,27 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
         }
     }
 
+    public override void SetUserProfileID (string userProfileID)
+    {
+        ymm_setUserProfileID (userProfileID);
+    }
+
+    public override void ReportUserProfile (YandexAppMetricaUserProfile userProfile)
+    {
+        ymm_reportUsertProfileJSON (JsonStringFromDictionary (userProfile.ToHashtable ()));
+    }
+
+    public override void ReportRevenue (YandexAppMetricaRevenue revenue)
+    {
+        ymm_reportRevenueJSON (JsonStringFromDictionary (revenue.ToHashtable ()));
+    }
+
     #endregion
 
+    private string JsonStringFromDictionary (IDictionary dictionary)
+    {
+        return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
+    }
 }
 
 public static class YandexAppMetricaExtensionsIOS
@@ -168,17 +152,17 @@ public static class YandexAppMetricaExtensionsIOS
         if (self.SessionTimeout.HasValue) {
             data ["SessionTimeout"] = self.SessionTimeout.Value;
         }
-        if (self.ReportCrashesEnabled.HasValue) {
-            data ["ReportCrashesEnabled"] = self.ReportCrashesEnabled.Value;
+        if (self.CrashReporting.HasValue) {
+            data ["CrashReporting"] = self.CrashReporting.Value;
         }
-        if (self.TrackLocationEnabled.HasValue) {
-            data ["TrackLocationEnabled"] = self.TrackLocationEnabled.Value;
+        if (self.LocationTracking.HasValue) {
+            data ["LocationTracking"] = self.LocationTracking.Value;
         }
-        if (self.LoggingEnabled.HasValue) {
-            data ["LoggingEnabled"] = self.LoggingEnabled.Value;
+        if (self.Logs.HasValue) {
+            data ["Logs"] = self.Logs.Value;
         }
-        if (self.HandleFirstActivationAsUpdateEnabled.HasValue) {
-            data ["HandleFirstActivationAsUpdateEnabled"] = self.HandleFirstActivationAsUpdateEnabled.Value;
+        if (self.HandleFirstActivationAsUpdate.HasValue) {
+            data ["HandleFirstActivationAsUpdate"] = self.HandleFirstActivationAsUpdate.Value;
         }
 
         if (self.PreloadInfo.HasValue) {
@@ -189,6 +173,54 @@ public static class YandexAppMetricaExtensionsIOS
             };
         }
 
+        return data;
+    }
+
+    public static Hashtable ToHashtable (this YandexAppMetricaUserProfile self)
+    {
+        if (self == null) {
+            return null;
+        }
+        var data = new Hashtable ();
+        var userProfileUpdates = self.GetUserProfileUpdates ();
+        for (int i = 0; i < userProfileUpdates.Count; ++i) {
+            data[i.ToString ()] = new Hashtable {
+                { "AttributeName", userProfileUpdates[i].AttributeName },
+                { "MethodName", userProfileUpdates[i].MethodName },
+                { "Key", userProfileUpdates[i].Key },
+                { "Values", userProfileUpdates[i].Values }
+            };
+        }
+        return data;
+    }
+
+    public static Hashtable ToHashtable (this YandexAppMetricaReceipt self)
+    {
+        Hashtable data = new Hashtable {
+            { "Data", self.Data },
+            { "TransactionID", self.TransactionID }
+        };
+        return data;
+    }
+
+    public static Hashtable ToHashtable (this YandexAppMetricaRevenue self)
+    {
+        var data = new Hashtable {
+            { "Price", self.Price },
+            { "Currency", self.Currency }
+        };
+        if (self.Quantity.HasValue) {
+            data ["Quantity"] = self.Quantity.Value;
+        }
+        if (self.ProductID != null) {
+            data["ProductID"] = self.ProductID;
+        }
+        if (self.Payload != null) {
+            data["Payload"] = self.Payload;
+        }
+        if (self.Receipt.HasValue) {
+            data["Receipt"] = self.Receipt.Value.ToHashtable ();
+        }
         return data;
     }
 }

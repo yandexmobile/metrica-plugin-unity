@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,19 +15,15 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
 
     #region IYandexAppMetrica implementation
 
-    public override void ActivateWithAPIKey (string apiKey)
-    {
-    }
-
     public override void ActivateWithConfiguration (YandexAppMetricaConfig config)
     {
     }
 
-    public override void OnResumeApplication ()
+    public override void ResumeSession ()
     {
     }
 
-    public override void OnPauseApplication ()
+    public override void PauseSession ()
     {
     }
 
@@ -35,39 +39,29 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     {
     }
 
-    public override void SetTrackLocationEnabled (bool enabled)
+    public override void SetLocationTracking (bool enabled)
     {
     }
 
-    public override void SetLocation (YandexAppMetricaConfig.Coordinates coordinates)
+    public override void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates)
     {
     }
-
-    public override void SetSessionTimeout (uint sessionTimeoutSeconds)
-    {
-    }
-
-    public override void SetReportCrashesEnabled (bool enabled)
-    {
-    }
-
-    public override void SetCustomAppVersion (string appVersion)
-    {
-    }
-
-    public override void SetLoggingEnabled ()
-    {
-    }
-
-    public override void SetEnvironmentValue (string key, string value)
-    {
-    }
-
-    public override bool CollectInstalledApps { get { return false; } set { } }
 
     public override string LibraryVersion { get { return default(string); } }
 
     public override int LibraryApiLevel { get { return default(int); } }
+
+    public override void SetUserProfileID (string userProfileID)
+    {
+    }
+
+    public override void ReportUserProfile (YandexAppMetricaUserProfile userProfile)
+    {
+    }
+
+    public override void ReportRevenue (YandexAppMetricaRevenue revenue)
+    {
+    }
 
     #endregion
 

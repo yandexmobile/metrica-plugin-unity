@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
@@ -6,7 +14,7 @@ public class MainSceneManager : MonoBehaviour
 {
     private GameObject nullGameObject = null;
 
-    private static bool isTrackLocationEnabled = true;
+    private static bool isLocationTracking = true;
     private PopUp popupWindow = new PopUp ();
     private static int counter = 1;
 
@@ -29,9 +37,9 @@ public class MainSceneManager : MonoBehaviour
             metrica.ReportEvent (report);
             popupWindow.showPopup ("Report: " + report);
         }
-        if (Button ("Track Location Enabled: " + isTrackLocationEnabled)) {
-            isTrackLocationEnabled = !isTrackLocationEnabled;
-            metrica.SetTrackLocationEnabled (isTrackLocationEnabled);
+        if (Button ("Track Location Enabled: " + isLocationTracking)) {
+            isLocationTracking = !isLocationTracking;
+            metrica.SetLocationTracking (isLocationTracking);
         }
         if (Button ("[CRASH] NullReference")) {
             nullGameObject.SendMessage ("");

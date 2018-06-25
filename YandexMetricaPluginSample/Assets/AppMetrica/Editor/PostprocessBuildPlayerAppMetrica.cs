@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
@@ -40,10 +48,10 @@ public class PostprocessBuildPlayerAppMetrica
     [PostProcessBuild]
     public static void OnPostprocessBuild (BuildTarget buildTarget, string path)
     {
-#if UNITY_5
+#if UNITY_5 || UNITY_2017_1_OR_NEWER
         var expectedTarget = BuildTarget.iOS;
 #else
-		var expectedTarget = BuildTarget.iPhone;
+        var expectedTarget = BuildTarget.iPhone;
 #endif
         if (buildTarget == expectedTarget) {
             var projectPath = path + "/Unity-iPhone.xcodeproj/project.pbxproj";

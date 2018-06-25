@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,15 +29,15 @@ public struct YandexAppMetricaConfig
 
     public int? SessionTimeout { get; set; }
 
-    public bool? ReportCrashesEnabled { get; set; }
+    public bool? CrashReporting { get; set; }
 
-    public bool? TrackLocationEnabled { get; set; }
+    public bool? LocationTracking { get; set; }
 
-    public bool? LoggingEnabled { get; set; }
+    public bool? Logs { get; set; }
 
-    public bool? CollectInstalledApps { get; set; }
+    public bool? InstalledAppCollecting { get; set; }
 
-    public bool? HandleFirstActivationAsUpdateEnabled { get; set; }
+    public bool? HandleFirstActivationAsUpdate { get; set; }
 
     public YandexAppMetricaPreloadInfo? PreloadInfo { get; set; }
 
@@ -39,11 +47,11 @@ public struct YandexAppMetricaConfig
         AppVersion = null;
         Location = null;
         SessionTimeout = null;
-        ReportCrashesEnabled = null;
-        TrackLocationEnabled = null;
-        LoggingEnabled = null;
-        CollectInstalledApps = null;
-        HandleFirstActivationAsUpdateEnabled = null;
+        CrashReporting = null;
+        LocationTracking = null;
+        Logs = null;
+        InstalledAppCollecting = null;
+        HandleFirstActivationAsUpdate = null;
         PreloadInfo = null;
     }
 }

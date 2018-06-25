@@ -8,6 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.0.0
+
+* Updated native SDKs *(iOS 3.1.1, Android 3.1.0)*
+* Added user profiles
+* Added revenue tracking
+* Unified and revised the API
+
 ### Version 2.0.0
 
 * Updated native SDKs *(iOS 2.7.0, Android 2.62)*
@@ -32,5 +39,5 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 The directory **MetricaPluginSample** includes sample with plugin for Unity 5+. You should copy file  **Other/Unity.iOS.Extensions.Xcode.dll** into **MetricaPluginSample/Assets/YandexMobileMetrica/Editor** to launch sample for Unity 4.
 
-[LICENSE]: http://legal.yandex.ru/metrica_termsofuse/ "Yandex AppMetrica agreement"
+[LICENSE]: https://yandex.com/legal/appmetrica_sdk_agreement/ "Yandex AppMetrica agreement"
 [DOCUMENTATION]: https://tech.yandex.com/metrica-mobile-sdk/doc/mobile-sdk-dg/concepts/unity-plugin-docpage/ "Yandex AppMetrica Unity Plugin documentation"

@@ -1,12 +1,9 @@
 /*
- *  YMMYandexMetricaConfiguration.h
- *
- * This file is a part of the AppMetrica
- *
- * Version for iOS © 2016 YANDEX
- *
+ * Version for iOS
+ * © 2012–2017 YANDEX
  * You may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://legal.yandex.com/metrica_termsofuse/
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
 #import <Foundation/Foundation.h>
@@ -39,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  By default this option is disabled.
  */
-@property (nonatomic, assign) BOOL handleFirstActivationAsUpdateEnabled;
+@property (nonatomic, assign) BOOL handleFirstActivationAsUpdate;
 
 /** Enable/disable location reporting to AppMetrica.
  If enabled and location set via setLocation: method - that location would be used.
@@ -48,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  Enabled by default.
  */
-@property (nonatomic, assign) BOOL trackLocationEnabled;
+@property (nonatomic, assign) BOOL locationTracking;
 
 /** Set/get location to AppMetrica
  To enable AppMetrica to use this location trackLocationEnabled should be 'YES'
@@ -70,19 +67,19 @@ NS_ASSUME_NONNULL_BEGIN
  Enabled by default.
  To disable crash tracking, set the parameter value to false.
  */
-@property (nonatomic, assign) BOOL reportCrashesEnabled;
+@property (nonatomic, assign) BOOL crashReporting;
 
 /** Set/get the arbitrary application version for AppMetrica to report.
 
  By default, the application version is set in the app configuration file Info.plist (CFBundleShortVersionString).
  */
-@property (nonatomic, copy, nullable) NSString *customAppVersion;
+@property (nonatomic, copy, nullable) NSString *appVersion;
 
 /** Enable/disable logging.
 
  By default logging is disabled.
  */
-@property (nonatomic, assign) BOOL loggingEnabled;
+@property (nonatomic, assign) BOOL logs;
 
 /** Set/get preload info, which is used for tracking preload installs.
  Additional info could be https://appmetrica.yandex.com

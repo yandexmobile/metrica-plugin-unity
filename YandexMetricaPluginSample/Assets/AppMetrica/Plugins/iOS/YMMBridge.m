@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 #import "YMMBridge.h"
 
 #import <YandexMobileMetrica/YandexMobileMetrica.h>
@@ -7,27 +15,33 @@ static NSString *const kYMMUnityExceptionName = @"UnityException";
 
 static bool *g_ymm_isAppMetricaActivated = false;
 
-void ymm_activateWithAPIKey(char *apiKey)
+NSString *ymm_stringFromCString(char *string)
 {
-    if (apiKey != NULL) {
-        NSString *apiKeyString = [NSString stringWithUTF8String:apiKey];
-        if (apiKeyString.length > 0) {
-            [YMMYandexMetrica activateWithApiKey:apiKeyString];
-            g_ymm_isAppMetricaActivated = true;
-        }
-        else {
-            NSLog(@"AppMetrica could not be activated with an empty API key.");
-        }
-    }
+    return string == nil ? nil : [NSString stringWithUTF8String:string];
+}
+
+NSDictionary *ymm_dictionaryFromJSONString(NSString *json, NSError **error)
+{
+    return json == nil ? nil : [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding]
+                                                               options:0
+                                                                 error:error];
+}
+
+BOOL ymm_isDictionaryOrNil(NSDictionary *dictionary)
+{
+    return dictionary == nil || [dictionary isKindOfClass:[NSDictionary class]];
 }
 
 YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *configDictionary)
 {
+    if (configDictionary == nil) {
+        return nil;
+    }
     YMMYandexMetricaConfiguration *config =
     [[YMMYandexMetricaConfiguration alloc] initWithApiKey:configDictionary[@"ApiKey"]];
 
     if (configDictionary[@"AppVersion"] != nil) {
-        config.customAppVersion = (NSString *)configDictionary[@"AppVersion"];
+        config.appVersion = (NSString *)configDictionary[@"AppVersion"];
     }
     if (configDictionary[@"Location"] != nil) {
         NSDictionary *locationDictionary = configDictionary[@"Location"];
@@ -39,17 +53,17 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
     if (configDictionary[@"SessionTimeout"] != nil) {
         config.sessionTimeout = [configDictionary[@"SessionTimeout"] unsignedIntegerValue];
     }
-    if (configDictionary[@"ReportCrashesEnabled"] != nil) {
-        config.reportCrashesEnabled = [configDictionary[@"ReportCrashesEnabled"] boolValue];
+    if (configDictionary[@"CrashReporting"] != nil) {
+        config.crashReporting = [configDictionary[@"CrashReporting"] boolValue];
     }
-    if (configDictionary[@"TrackLocationEnabled"] != nil) {
-        config.trackLocationEnabled = [configDictionary[@"TrackLocationEnabled"] boolValue];
+    if (configDictionary[@"LocationTracking"] != nil) {
+        config.locationTracking = [configDictionary[@"LocationTracking"] boolValue];
     }
-    if (configDictionary[@"LoggingEnabled"] != nil) {
-        config.loggingEnabled = [configDictionary[@"LoggingEnabled"] boolValue];
+    if (configDictionary[@"Logs"] != nil) {
+        config.logs = [configDictionary[@"Logs"] boolValue];
     }
-    if (configDictionary[@"HandleFirstActivationAsUpdateEnabled"] != nil) {
-        config.handleFirstActivationAsUpdateEnabled = [configDictionary[@"HandleFirstActivationAsUpdateEnabled"] boolValue];
+    if (configDictionary[@"HandleFirstActivationAsUpdate"] != nil) {
+        config.handleFirstActivationAsUpdate = [configDictionary[@"HandleFirstActivationAsUpdate"] boolValue];
     }
     if (configDictionary[@"PreloadInfo"] != nil) {
         NSDictionary *preloadInfoDictionary = configDictionary[@"PreloadInfo"];
@@ -70,26 +84,18 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
 
 void ymm_activateWithConfigurationJSON(char *configurationJSON)
 {
-    if (configurationJSON != NULL) {
-        NSString *JSONString = [NSString stringWithUTF8String:configurationJSON];
+    NSString *configString = ymm_stringFromCString(configurationJSON);
 
-        NSError *error = nil;
-        NSDictionary *configDictionary =
-            [NSJSONSerialization JSONObjectWithData:[JSONString dataUsingEncoding:NSUTF8StringEncoding]
-                                            options:0
-                                              error:&error];
+    NSError *error = nil;
+    NSDictionary *configDictionary = ymm_dictionaryFromJSONString(configString, &error);
 
-        if (error == nil && [configDictionary isKindOfClass:[NSDictionary class]]) {
-            NSString *apiKey = configDictionary[@"ApiKey"];
-            if (apiKey.length > 0) {
-                YMMYandexMetricaConfiguration *config = ymm_configurationFromDictionary(configDictionary);
-                [YMMYandexMetrica activateWithConfiguration:config];
-                g_ymm_isAppMetricaActivated = true;
-            }
-            else {
-                NSLog(@"AppMetrica could not be activated with an empty API key.");
-            }
-        }
+    if (error == nil && ymm_isDictionaryOrNil(configDictionary)) {
+        YMMYandexMetricaConfiguration *config = ymm_configurationFromDictionary(configDictionary);
+        [YMMYandexMetrica activateWithConfiguration:config];
+        g_ymm_isAppMetricaActivated = true;
+    }
+    else {
+        NSLog(@"Invalid configuration json to activate AppMetrica %@", configString);
     }
 }
 
@@ -100,46 +106,45 @@ bool ymm_isAppMetricaActivated()
 
 void ymm_reportEvent(char *message)
 {
-    if (message != NULL) {
-        NSString *messageString = [NSString stringWithUTF8String:message];
-        [YMMYandexMetrica reportEvent:messageString onFailure:nil];
-    }
+    NSString *messageString = ymm_stringFromCString(message);
+    [YMMYandexMetrica reportEvent:messageString onFailure:nil];
 }
 
 void ymm_reportEventWithParameters(char *message, char *parameters)
 {
-    if (message != NULL && parameters != NULL) {
-        NSString *messageString = [NSString stringWithUTF8String:message];
-        NSString *parametersString = [NSString stringWithUTF8String:parameters];
+    NSString *messageString = ymm_stringFromCString(message);
+    NSString *parametersString = ymm_stringFromCString(parameters);
 
-        NSError *error = nil;
-        NSDictionary *parametersDictionary =
-            [NSJSONSerialization JSONObjectWithData:[parametersString dataUsingEncoding:NSUTF8StringEncoding]
-                                            options:0
-                                              error:&error];
+    NSError *error = nil;
+    NSDictionary *parametersDictionary = ymm_dictionaryFromJSONString(parametersString, &error);
 
-        if (error == nil && [parametersDictionary isKindOfClass:[NSDictionary class]]) {
-            [YMMYandexMetrica reportEvent:messageString parameters:parametersDictionary onFailure:nil];
-        }
+    if (error == nil && ymm_isDictionaryOrNil(parametersDictionary)) {
+        [YMMYandexMetrica reportEvent:messageString parameters:parametersDictionary onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid parameters json for report event %@", parametersString);
     }
 }
 
 void ymm_reportError(char *condition, char *stackTrace)
 {
-    if (condition != NULL && stackTrace != NULL) {
-        NSString *conditionString = [NSString stringWithUTF8String:condition];
-        NSString *stackTraceString = [NSString stringWithUTF8String:stackTrace];
+    NSString *conditionString = ymm_stringFromCString(condition);
+    NSString *stackTraceString = ymm_stringFromCString(stackTrace);
 
-        NSException *exception = [[NSException alloc] initWithName:kYMMUnityExceptionName
-                                                            reason:stackTraceString
-                                                          userInfo:nil];
-        [YMMYandexMetrica reportError:conditionString exception:exception onFailure:nil];
-    }
+    NSException *exception = [[NSException alloc] initWithName:kYMMUnityExceptionName
+                                                        reason:stackTraceString
+                                                      userInfo:nil];
+    [YMMYandexMetrica reportError:conditionString exception:exception onFailure:nil];
 }
 
-void ymm_setTrackLocationEnabled(bool enabled)
+void ymm_setLocationTracking(bool enabled)
 {
-    [YMMYandexMetrica setTrackLocationEnabled:(BOOL)enabled];
+    [YMMYandexMetrica setLocationTracking:(BOOL)enabled];
+}
+
+void ymm_resetLocation()
+{
+    [YMMYandexMetrica setLocation:nil];
 }
 
 void ymm_setLocation(double latitude, double longitude)
@@ -147,39 +152,6 @@ void ymm_setLocation(double latitude, double longitude)
     CLLocation *location = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)latitude
                                                       longitude:(CLLocationDegrees)longitude];
     [YMMYandexMetrica setLocation:location];
-}
-
-void ymm_setSessionTimeout(unsigned int sessionTimeoutSeconds)
-{
-    [YMMYandexMetrica setSessionTimeout:(NSUInteger)sessionTimeoutSeconds];
-}
-
-void ymm_setReportCrashesEnabled(bool enabled)
-{
-    [YMMYandexMetrica setReportCrashesEnabled:(BOOL)enabled];
-}
-
-void ymm_setCustomAppVersion(char *appVersion)
-{
-    if (appVersion != NULL) {
-        NSString *appVersionString = [NSString stringWithUTF8String:appVersion];
-        [YMMYandexMetrica setCustomAppVersion:appVersionString];
-    }
-}
-
-void ymm_setLoggingEnabled(bool enabled)
-{
-    [YMMYandexMetrica setLoggingEnabled:(BOOL)enabled];
-}
-
-void ymm_setEnvironmentValue(char *key, char *value)
-{
-    if (key != NULL && value != NULL) {
-        NSString *keyString = [NSString stringWithUTF8String:key];
-        NSString *valueString = [NSString stringWithUTF8String:value];
-
-        [YMMYandexMetrica setEnvironmentValue:keyString forKey:valueString];
-    }
 }
 
 char *ymm_getLibraryVersion()
@@ -190,4 +162,260 @@ char *ymm_getLibraryVersion()
     char *res = (char *)malloc(strlen(cVersion) + 1);
     strcpy(res, cVersion);
     return res;
+}
+
+void ymm_setUserProfileID(char *userProfileID)
+{
+    NSString *userProfileIDString = ymm_stringFromCString(userProfileID);
+    [YMMYandexMetrica setUserProfileID:userProfileIDString];
+}
+
+YMMUserProfileUpdate *ymm_userProfileBirthDateFromDictionary(NSString *methodName, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withAge"]) {
+        userProfileUpdate = [[YMMProfileAttribute birthDate] withAge:[values[0] unsignedIntegerValue]];
+    }
+    else if ([methodName isEqualToString:@"withBirthDate"]) {
+        NSDateComponents *date = [[NSDateComponents alloc] init];
+        if (values.count >= 1) {
+            date.year = [values[0] unsignedIntegerValue];
+        }
+        if (values.count >= 2) {
+            date.month = [values[1] unsignedIntegerValue];
+        }
+        if (values.count >= 3) {
+            date.day = [values[2] unsignedIntegerValue];
+        }
+        userProfileUpdate = [[YMMProfileAttribute birthDate] withDateComponents:date];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute birthDate] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMGenderType ymm_userProfileGenderTypeFromString(NSString *genderType)
+{
+    if ([genderType isEqualToString:@"MALE"]) {
+        return YMMGenderTypeMale;
+    }
+    else if ([genderType isEqualToString:@"FEMALE"]) {
+        return YMMGenderTypeFemale;
+    }
+    return YMMGenderTypeOther;
+}
+
+YMMUserProfileUpdate *ymm_userProfileGenderFromDictionary(NSString *methodName, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        YMMGenderType genderType = ymm_userProfileGenderTypeFromString([values firstObject]);
+        userProfileUpdate = [[YMMProfileAttribute gender] withValue:genderType];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute gender] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileNameFromDictionary(NSString *methodName, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        userProfileUpdate = [[YMMProfileAttribute name] withValue:[values firstObject]];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute name] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileNotificationsEnabledFromDictionary(NSString *methodName, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        userProfileUpdate = [[YMMProfileAttribute notificationsEnabled] withValue:[[values firstObject] boolValue]];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute notificationsEnabled] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileBoolDictionary(NSString *methodName, NSString *key, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        userProfileUpdate = [[YMMProfileAttribute customBool:key] withValue:[[values firstObject] boolValue]];
+    }
+    else if ([methodName isEqualToString:@"withValueIfUndefined"]) {
+        userProfileUpdate = [[YMMProfileAttribute customBool:key] withValueIfUndefined:[[values firstObject] boolValue]];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute customBool:key] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileCounterFromDictionary(NSString *methodName, NSString *key, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withDelta"]) {
+        userProfileUpdate = [[YMMProfileAttribute customCounter:key] withDelta:[[values firstObject] doubleValue]];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileNumberFromDictionary(NSString *methodName, NSString *key, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        userProfileUpdate = [[YMMProfileAttribute customNumber:key] withValue:[[values firstObject] doubleValue]];
+    }
+    else if ([methodName isEqualToString:@"withValueIfUndefined"]) {
+        userProfileUpdate = [[YMMProfileAttribute customNumber:key] withValueIfUndefined:[[values firstObject] doubleValue]];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute customNumber:key] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfileUpdate *ymm_userProfileStringFromDictionary(NSString *methodName, NSString *key, NSArray *values)
+{
+    YMMUserProfileUpdate *userProfileUpdate = nil;
+    if ([methodName isEqualToString:@"withValue"]) {
+        userProfileUpdate = [[YMMProfileAttribute customString:key] withValue:[values firstObject]];
+    }
+    else if ([methodName isEqualToString:@"withValueIfUndefined"]) {
+        userProfileUpdate = [[YMMProfileAttribute customString:key] withValueIfUndefined:[values firstObject]];
+    }
+    else if ([methodName isEqualToString:@"withValueReset"]) {
+        userProfileUpdate = [[YMMProfileAttribute customString:key] withValueReset];
+    }
+    else {
+        NSLog(@"Unknown method %@", methodName);
+    }
+    return userProfileUpdate;
+}
+
+YMMUserProfile *ymm_userProfileFromDictionary(NSDictionary *userProfileDictionary)
+{
+    if (userProfileDictionary == nil) {
+        return nil;
+    }
+    YMMMutableUserProfile *userProfile = [[YMMMutableUserProfile alloc] init];
+
+    for (int i = 0; i < userProfileDictionary.count; ++i) {
+        NSDictionary *userProfileUpdateDictionary = userProfileDictionary[[@(i) stringValue]];
+        NSString *attributeName = userProfileUpdateDictionary[@"AttributeName"];
+        NSString *methodName = userProfileUpdateDictionary[@"MethodName"];
+        NSString *key = userProfileUpdateDictionary[@"Key"];
+        NSArray *values = [userProfileUpdateDictionary mutableArrayValueForKey:@"Values"];
+        if ([attributeName isEqualToString:@"birthDate"]) {
+            [userProfile apply:ymm_userProfileBirthDateFromDictionary(methodName, values)];
+        }
+        else if ([attributeName isEqualToString:@"gender"]) {
+            [userProfile apply:ymm_userProfileGenderFromDictionary(methodName, values)];
+        }
+        else if ([attributeName isEqualToString:@"name"]) {
+            [userProfile apply:ymm_userProfileNameFromDictionary(methodName, values)];
+        }
+        else if ([attributeName isEqualToString:@"notificationsEnabled"]) {
+            [userProfile apply:ymm_userProfileNotificationsEnabledFromDictionary(methodName, values)];
+        }
+        else if ([attributeName isEqualToString:@"customBoolean"]) {
+            [userProfile apply:ymm_userProfileBoolDictionary(methodName, key, values)];
+        }
+        else if ([attributeName isEqualToString:@"customCounter"]) {
+            [userProfile apply:ymm_userProfileCounterFromDictionary(methodName, key, values)];
+        }
+        else if ([attributeName isEqualToString:@"customNumber"]) {
+            [userProfile apply:ymm_userProfileNumberFromDictionary(methodName, key, values)];
+        }
+        else if ([attributeName isEqualToString:@"customString"]) {
+            [userProfile apply:ymm_userProfileStringFromDictionary(methodName, key, values)];
+        }
+        else {
+            NSLog(@"Unknown attribute %@", attributeName);
+        }
+    }
+    return userProfile;
+}
+
+void ymm_reportUsertProfileJSON(char *userProfileJSON)
+{
+    NSString *userProfileString = ymm_stringFromCString(userProfileJSON);
+
+    NSError *error = nil;
+    NSDictionary *userProfileDictionary = ymm_dictionaryFromJSONString(userProfileString, &error);
+
+    if (error == nil && ymm_isDictionaryOrNil(userProfileDictionary)) {
+        YMMUserProfile *userProfile = ymm_userProfileFromDictionary(userProfileDictionary);
+        [YMMYandexMetrica reportUserProfile:userProfile onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid userProfile json %@", userProfileString);
+    }
+}
+
+YMMRevenueInfo *ymm_revenueFromDictionary(NSDictionary *revenueDictionary)
+{
+    if (revenueDictionary == nil) {
+        return nil;
+    }
+    double price = [revenueDictionary[@"Price"] doubleValue];
+    NSString *currency = revenueDictionary[@"Currency"];
+    YMMMutableRevenueInfo *revenue = [[YMMMutableRevenueInfo alloc] initWithPrice:price currency:currency];
+
+    if (revenueDictionary[@"Quantity"] != nil) {
+        [revenue setQuantity:[revenueDictionary[@"Quantity"] unsignedIntegerValue]];
+    }
+    [revenue setProductID:revenueDictionary[@"ProductID"]];
+    [revenue setPayload:ymm_dictionaryFromJSONString(revenueDictionary[@"Payload"], nil)];
+
+    if (revenueDictionary[@"Receipt"] != nil) {
+        NSDictionary *receiptDictionary = revenueDictionary[@"Receipt"];
+        [revenue setReceiptData:[[NSData alloc] initWithBase64EncodedString:receiptDictionary[@"Data"] options:0]];
+        [revenue setTransactionID:receiptDictionary[@"TransactionID"]];
+    }
+    return revenue;
+}
+
+void ymm_reportRevenueJSON(char *revenueJSON)
+{
+    NSString *revenueString = ymm_stringFromCString(revenueJSON);
+
+    NSError *error = nil;
+    NSDictionary *revenueDictionary = ymm_dictionaryFromJSONString(revenueString, &error);
+
+    if (error == nil && ymm_isDictionaryOrNil(revenueDictionary)) {
+        YMMRevenueInfo *revenue = ymm_revenueFromDictionary(revenueDictionary);
+        [YMMYandexMetrica reportRevenue:revenue onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid revenue json %@", revenueString);
+    }
 }

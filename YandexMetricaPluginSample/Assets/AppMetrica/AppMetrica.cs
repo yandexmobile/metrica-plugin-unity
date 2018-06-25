@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 // Uncomment the following line to disable location tracking
 // #define APP_METRICA_TRACK_LOCATION_DISABLED
 // or just add APP_METRICA_TRACK_LOCATION_DISABLED into
@@ -9,7 +17,7 @@ using System.Collections;
 public class AppMetrica : MonoBehaviour
 {
     [SerializeField]
-    private string APIKey;
+    private string ApiKey;
 
     [SerializeField]
     private bool ExceptionsReporting = true;
@@ -18,10 +26,10 @@ public class AppMetrica : MonoBehaviour
     private uint SessionTimeoutSec = 10;
 
     [SerializeField]
-    private bool TrackLocation = true;
+    private bool LocationTracking = true;
 
     [SerializeField]
-    private bool LoggingEnabled = true;
+    private bool Logs = true;
 
     [SerializeField]
     private bool HandleFirstActivationAsUpdate = false;
@@ -56,19 +64,19 @@ public class AppMetrica : MonoBehaviour
 
     void SetupMetrica ()
     {
-        var configuration = new YandexAppMetricaConfig (APIKey) {
+        var configuration = new YandexAppMetricaConfig (ApiKey) {
             SessionTimeout = (int)SessionTimeoutSec,
-            LoggingEnabled = LoggingEnabled,
-            HandleFirstActivationAsUpdateEnabled = HandleFirstActivationAsUpdate,
+            Logs = Logs,
+            HandleFirstActivationAsUpdate = HandleFirstActivationAsUpdate,
         };
 
 #if !APP_METRICA_TRACK_LOCATION_DISABLED
-        configuration.TrackLocationEnabled = TrackLocation;
-        if (TrackLocation) {
+        configuration.LocationTracking = LocationTracking;
+        if (LocationTracking) {
             Input.location.Start ();
         }
 #else
-		configuration.TrackLocationEnabled = false;
+        configuration.LocationTracking = false;
 #endif
 
         Instance.ActivateWithConfiguration (configuration);
@@ -88,7 +96,7 @@ public class AppMetrica : MonoBehaviour
 
     private void Start ()
     {
-        Instance.OnResumeApplication ();
+        Instance.ResumeSession ();
     }
 
     private void OnEnable ()
@@ -118,9 +126,9 @@ public class AppMetrica : MonoBehaviour
         if (_actualPauseStatus != pauseStatus) {
             _actualPauseStatus = pauseStatus;
             if (pauseStatus) {
-                Instance.OnPauseApplication ();
+                Instance.PauseSession ();
             } else {
-                Instance.OnResumeApplication ();
+                Instance.ResumeSession ();
             }
         }
     }

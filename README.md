@@ -19,6 +19,10 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 * Added revenue tracking
 * Unified and revised the API
 
+### Version 2.1
+
+* Updated native SDKs *(iOS 2.9.8)*
+
 ### Version 2.0.0
 
 * Updated native SDKs *(iOS 2.7.0, Android 2.62)*

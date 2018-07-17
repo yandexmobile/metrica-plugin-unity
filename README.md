@@ -8,6 +8,9 @@ Documentation could be found at [AppMetrica official site] [DOCUMENTATION].
 
 ## Changelog
 
+### Version 2.1
+* Update native SDKs *(iOS 2.9.8)*
+
 ### Version 2.0.0
 
 * Updated native SDKs *(iOS 2.7.0, Android 2.62)*

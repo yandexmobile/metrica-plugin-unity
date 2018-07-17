@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -85,7 +93,7 @@ public interface IYandexAppMetrica
     /// <para>iOS: +(void)setLocation:(CLLocation *)location</para>
     /// </summary>
     /// <param name="coordinates">Location coordinates(latitude and longitude).</param>
-    void SetLocation (YandexAppMetricaConfig.Coordinates coordinates);
+    void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates);
 
     /// <summary>
     /// <para>Sets the session timeout.</para>

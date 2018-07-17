@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -81,10 +89,10 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         }
     }
 
-    public override void SetLocation (YandexAppMetricaConfig.Coordinates coordinates)
+    public override void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates)
     {
         if (metricaClass != null) {
-            metricaClass.CallStatic ("setLocation", coordinates.ToAndroidLocation ());
+            metricaClass.CallStatic ("setLocation", coordinates.Value.ToAndroidLocation ());
         }
     }
 

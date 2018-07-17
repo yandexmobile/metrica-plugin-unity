@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 #import "YMMBridge.h"
 
 #import <YandexMobileMetrica/YandexMobileMetrica.h>
@@ -142,6 +150,11 @@ void ymm_setTrackLocationEnabled(bool enabled)
     [YMMYandexMetrica setTrackLocationEnabled:(BOOL)enabled];
 }
 
+void ymm_resetLocation()
+{
+    [YMMYandexMetrica setLocation:nil];
+}
+
 void ymm_setLocation(double latitude, double longitude)
 {
     CLLocation *location = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)latitude
@@ -174,11 +187,14 @@ void ymm_setLoggingEnabled(bool enabled)
 
 void ymm_setEnvironmentValue(char *key, char *value)
 {
-    if (key != NULL && value != NULL) {
+    if (key != NULL) {
         NSString *keyString = [NSString stringWithUTF8String:key];
-        NSString *valueString = [NSString stringWithUTF8String:value];
+        NSString *valueString = nil;
+        if (value != NULL) {
+            valueString = [NSString stringWithUTF8String:value];
+        }
 
-        [YMMYandexMetrica setEnvironmentValue:keyString forKey:valueString];
+        [YMMYandexMetrica setEnvironmentValue:valueString forKey:keyString];
     }
 }
 

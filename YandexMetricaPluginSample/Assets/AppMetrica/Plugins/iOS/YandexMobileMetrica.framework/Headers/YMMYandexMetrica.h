@@ -1,18 +1,16 @@
 /*
- *  YMMYandexMetrica.h
- *
- * This file is a part of the AppMetrica
- *
- * Version for iOS © 2016 YANDEX
- *
+ * Version for iOS
+ * © 2012–2017 YANDEX
  * You may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://legal.yandex.com/metrica_termsofuse/
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
 #import <Foundation/Foundation.h>
 
 @class CLLocation;
 @class YMMYandexMetricaConfiguration;
+@protocol YMMYandexMetricaReporting;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -142,6 +140,20 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  @param url URL that has opened the application.
  */
 + (BOOL)handleOpenURL:(NSURL *)url;
+
+/** Returns id<YMMYandexMetricaReporting> that can send events to specific API key.
+
+ @param apiKey Api key to send events to.
+ @return id<YMMYandexMetricaReporting> that conforms to YMMYandexMetricaReporting and handles 
+ sending events to specified apikey
+ */
++ (nullable id<YMMYandexMetricaReporting>)reporterForApiKey:(NSString *)apiKey;
+
+/**
+ * Sets referral URL for this installation. This might be required to track some specific traffic sources like Facebook.
+ * @param url referral URL value.
+ */
++ (void)reportReferralUrl:(NSURL *)url;
 
 @end
 

@@ -1,3 +1,11 @@
+/*
+ * Version for Unity
+ * © 2015-2017 YANDEX
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://yandex.com/legal/appmetrica_sdk_agreement/
+ */
+
 // Uncomment the following line to disable location tracking
 // #define APP_METRICA_TRACK_LOCATION_DISABLED
 // or just add APP_METRICA_TRACK_LOCATION_DISABLED into

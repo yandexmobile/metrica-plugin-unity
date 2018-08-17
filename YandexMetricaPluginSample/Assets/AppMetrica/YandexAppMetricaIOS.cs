@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System;
 
 #if UNITY_IPHONE || UNITY_IOS
 
@@ -47,6 +48,17 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     [DllImport ("__Internal")]
     private static extern void ymm_reportRevenueJSON (string revenueJSON);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_setStatisticsSending (bool enabled);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_sendEventsBuffer ();
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_requestAppMetricaDeviceID (YMMRequestDeviceIDCallbackDelegate callbackDelegate, IntPtr actionPtr);
+
+    private delegate void YMMRequestDeviceIDCallbackDelegate (IntPtr actionPtr, string deviceId, string errorString);
 
     #region IYandexAppMetrica implementation
 
@@ -123,11 +135,67 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
         ymm_reportRevenueJSON (JsonStringFromDictionary (revenue.ToHashtable ()));
     }
 
+    public override void SetStatisticsSending (bool enabled)
+    {
+        ymm_setStatisticsSending (enabled);
+    }
+
+    public override void SendEventsBuffer ()
+    {
+        ymm_sendEventsBuffer ();
+    }
+
+    public override void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action)
+    {
+        ymm_requestAppMetricaDeviceID (RequestDeviceIDCallback, ActionToIntPtr (action));
+    }
+
     #endregion
 
     private string JsonStringFromDictionary (IDictionary dictionary)
     {
         return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
+    }
+
+    private static IntPtr ActionToIntPtr (object obj)
+    {
+        if (obj == null) {
+            return IntPtr.Zero;
+        }
+
+        return GCHandle.ToIntPtr (GCHandle.Alloc (obj));
+    }
+
+    private static Action<string, YandexAppMetricaRequestDeviceIDError?> IntPtrToAction (IntPtr actionPtr)
+    {
+        if (IntPtr.Zero.Equals (actionPtr)) {
+            return null;
+        }
+
+        var gcHandle = GCHandle.FromIntPtr (actionPtr);
+        return gcHandle.Target as Action<string, YandexAppMetricaRequestDeviceIDError?>;
+    }
+
+    [AOT.MonoPInvokeCallback (typeof (YMMRequestDeviceIDCallbackDelegate))]
+    private static void RequestDeviceIDCallback (IntPtr actionPtr, string deviceId, string errorString)
+    {
+        Action<string, YandexAppMetricaRequestDeviceIDError?> action = IntPtrToAction (actionPtr);
+        if (action != null) {
+            action.Invoke (deviceId, RequestDeviceIDErrorFromString (errorString));
+        }
+    }
+
+    private static YandexAppMetricaRequestDeviceIDError? RequestDeviceIDErrorFromString (string errorString) 
+    {
+        if (string.IsNullOrEmpty (errorString)) {
+            return null;
+        }
+        try {
+            var error = Enum.Parse (typeof (YandexAppMetricaRequestDeviceIDError), errorString);
+            return (YandexAppMetricaRequestDeviceIDError?) error;
+        } catch (ArgumentException) {
+            return YandexAppMetricaRequestDeviceIDError.UNKNOWN;
+        }
     }
 }
 
@@ -172,6 +240,9 @@ public static class YandexAppMetricaExtensionsIOS
                 { "AdditionalInfo", new Hashtable (preloadInfo.AdditionalInfo) },
             };
         }
+        if (self.StatisticsSending.HasValue) {
+            data["StatisticsSending"] = self.StatisticsSending.Value;
+        }
 
         return data;
     }
@@ -196,10 +267,13 @@ public static class YandexAppMetricaExtensionsIOS
 
     public static Hashtable ToHashtable (this YandexAppMetricaReceipt self)
     {
-        Hashtable data = new Hashtable {
-            { "Data", self.Data },
-            { "TransactionID", self.TransactionID }
-        };
+        var data = new Hashtable ();
+        if (self.Data != null) {
+            data ["Data"] = self.Data;
+        }
+        if (self.TransactionID != null) {
+            data ["TransactionID"] = self.TransactionID;
+        }
         return data;
     }
 

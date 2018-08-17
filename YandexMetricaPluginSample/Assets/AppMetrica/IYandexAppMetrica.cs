@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public delegate void ConfigUpdateHandler (YandexAppMetricaConfig config);
 
@@ -112,4 +113,10 @@ public interface IYandexAppMetrica
     void ReportUserProfile (YandexAppMetricaUserProfile userProfile);
 
     void ReportRevenue (YandexAppMetricaRevenue revenue);
+
+    void SetStatisticsSending (bool enabled);
+
+    void SendEventsBuffer ();
+
+    void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action);
 }

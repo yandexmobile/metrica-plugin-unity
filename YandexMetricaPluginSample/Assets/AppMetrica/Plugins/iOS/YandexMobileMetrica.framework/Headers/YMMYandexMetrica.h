@@ -7,6 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "YMMCompletionBlocks.h"
 
 @class CLLocation;
 @class YMMYandexMetricaConfiguration;
@@ -89,6 +90,14 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  */
 + (void)setUserProfileID:(nullable NSString *)userProfileID;
 
+/** Enables/disables statistics sending to the AppMetrica server.
+
+ @note Disabling this option also turns off data sending from the reporters that initialized for different apiKey.
+
+ @param enabled Flag indicating whether the statistics sending is enabled. By default, the sending is enabled.
+ */
++ (void)setStatisticsSending:(BOOL)enabled;
+
 /** Enables/disables location reporting to AppMetrica.
  If enabled and location set via setLocation: method - that location would be used.
  If enabled and location is not set via setLocation,
@@ -109,6 +118,16 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 /** Retrieves current version of library.
  */
 + (NSString *)libraryVersion;
+
+/** Retrieves unique AppMetrica device identifier. It is used to identify a device in the statistics.
+
+ @note AppMetrica device ID is used in the Logs API and Post API as 'appmetrica_device_id'.
+
+ @param queue Queue for the block to be dispatched to. If nil, main queue is used.
+ @param block Block will be dispatched upon identifier becoming available or in a case of error.
+ */
++ (void)requestAppMetricaDeviceIDWithCompletionQueue:(nullable dispatch_queue_t)queue
+                                     completionBlock:(YMMAppMetricaDeviceIDRetrievingBlock)block;
 
 /** Handles the URL that has opened the application.
  Reports the URL for deep links tracking.
@@ -141,6 +160,16 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  * @param url referral URL value.
  */
 + (void)reportReferralUrl:(NSURL *)url;
+
+/** Sends all stored events from the buffer.
+
+ AppMetrica SDK doesn't send events immediately after they occurred. It stores events data in the buffer.
+ This method sends all the data from the buffer and flushes it.
+ Use the method to force stored events sending after important checkpoints of user scenarios.
+
+ @warning Frequent use of the method can lead to increasing outgoing internet traffic and energy consumption.
+ */
++ (void)sendEventsBuffer;
 
 @end
 

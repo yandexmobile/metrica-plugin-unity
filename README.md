@@ -8,6 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.1.0
+
+* Updated native SDKs *(iOS 3.2.0, Android 3.2.2)*
+* Added a method to disable statistics sending.
+* Added a method to retrieve the AppMetrica device ID.
+* Added a method to force stored events sending.
+
 ### Version 3.0.1
 
 * Updated native *iOS SDK 3.1.2*

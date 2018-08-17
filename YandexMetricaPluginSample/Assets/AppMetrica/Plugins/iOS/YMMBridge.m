@@ -6,10 +6,12 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-#import "YMMBridge.h"
-
 #import <YandexMobileMetrica/YandexMobileMetrica.h>
 #import <CoreLocation/CoreLocation.h>
+
+typedef const void *YMMAction;
+
+typedef void (*YMMRequestDeviceIDCallbackDelegate)(YMMAction action, const char *deviceId, const char *errorString);
 
 static NSString *const kYMMUnityExceptionName = @"UnityException";
 
@@ -77,6 +79,9 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
         }
 
         config.preloadInfo = preloadInfo;
+    }
+    if (configDictionary[@"StatisticsSending"] != nil) {
+        config.statisticsSending = [configDictionary[@"StatisticsSending"] boolValue];
     }
 
     return config;
@@ -418,4 +423,37 @@ void ymm_reportRevenueJSON(char *revenueJSON)
     else {
         NSLog(@"Invalid revenue json %@", revenueString);
     }
+}
+
+void ymm_setStatisticsSending(bool enabled)
+{
+    [YMMYandexMetrica setStatisticsSending:(BOOL)enabled];
+}
+
+void ymm_sendEventsBuffer()
+{
+    [YMMYandexMetrica sendEventsBuffer];
+}
+
+char *ymm_stringFromRequestDeviceIDError(NSError *error)
+{
+    if (error == nil) {
+        return nil;
+    }
+    if ([error.domain isEqualToString:NSURLErrorDomain]) {
+        return "NETWORK";
+    }
+    return "UNKNOWN";
+}
+
+void ymm_requestAppMetricaDeviceID(YMMRequestDeviceIDCallbackDelegate callbackDelegate, YMMAction actionPtr)
+{
+    [YMMYandexMetrica requestAppMetricaDeviceIDWithCompletionQueue:nil completionBlock:^(NSString * _Nullable appMetricaDeviceID, NSError * _Nullable error) {
+        if (error != nil) {
+            NSLog(@"Error request AppMetrica DeviceID: %@", error.description);
+        }
+        if (callbackDelegate != nil) {
+            callbackDelegate(actionPtr, [appMetricaDeviceID UTF8String], ymm_stringFromRequestDeviceIDError(error));
+        }
+    }];
 }

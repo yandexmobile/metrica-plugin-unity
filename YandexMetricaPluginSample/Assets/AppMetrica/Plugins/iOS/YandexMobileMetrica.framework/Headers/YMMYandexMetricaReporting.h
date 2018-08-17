@@ -79,6 +79,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)pauseSession;
 
+/** Enables/disables statistics sending to the AppMetrica server.
+
+ @note Disabling this option doesn't affect data sending from the main apiKey.
+
+ @param enabled Flag indicating whether the statistics sending is enabled. By default, the sending is enabled.
+ */
+- (void)setStatisticsSending:(BOOL)enabled;
+
+/** Sends all stored events from the buffer.
+ 
+ AppMetrica SDK doesn't send events immediately after they occurred. It stores events data in the buffer.
+ This method sends all the data from the buffer and flushes it.
+ Use the method to force stored events sending after important checkpoints of user scenarios.
+
+ @warning Frequent use of the method can lead to increasing outgoing internet traffic and energy consumption.
+ */
+- (void)sendEventsBuffer;
+
 @end
 
 NS_ASSUME_NONNULL_END

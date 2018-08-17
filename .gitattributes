@@ -1,3 +1,4 @@
+YandexMetricaPluginSample/Assets/AppMetrica/Plugins/iOS/YandexMobileMetrica.framework/YandexMobileMetrica binary
 **/YandexMobileMetrica.framework/YandexMobileMetrica filter=lfs diff=lfs merge=lfs -text
 AppMetrica.unitypackage filter=lfs diff=lfs merge=lfs -text
 **/YandexMobileMetricaCrashes.framework/YandexMobileMetricaCrashes filter=lfs diff=lfs merge=lfs -text

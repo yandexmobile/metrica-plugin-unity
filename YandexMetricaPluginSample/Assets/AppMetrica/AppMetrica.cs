@@ -34,6 +34,9 @@ public class AppMetrica : MonoBehaviour
     [SerializeField]
     private bool HandleFirstActivationAsUpdate = false;
 
+    [SerializeField]
+    private bool StatisticsSending = true;
+
     private static bool _isInitialized = false;
     private bool _actualPauseStatus = false;
 
@@ -68,6 +71,7 @@ public class AppMetrica : MonoBehaviour
             SessionTimeout = (int)SessionTimeoutSec,
             Logs = Logs,
             HandleFirstActivationAsUpdate = HandleFirstActivationAsUpdate,
+            StatisticsSending = StatisticsSending,
         };
 
 #if !APP_METRICA_TRACK_LOCATION_DISABLED
@@ -102,7 +106,7 @@ public class AppMetrica : MonoBehaviour
     private void OnEnable ()
     {
         if (ExceptionsReporting) {
-#if UNITY_5
+#if UNITY_5 || UNITY_5_3_OR_NEWER
             Application.logMessageReceived += HandleLog;
 #else
 			Application.RegisterLogCallback(HandleLog);
@@ -113,7 +117,7 @@ public class AppMetrica : MonoBehaviour
     private void OnDisable ()
     {
         if (ExceptionsReporting) {
-#if UNITY_5
+#if UNITY_5 || UNITY_5_3_OR_NEWER
             Application.logMessageReceived -= HandleLog;
 #else
 			Application.RegisterLogCallback(null);

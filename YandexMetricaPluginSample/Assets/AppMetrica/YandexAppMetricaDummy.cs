@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class YandexAppMetricaDummy : BaseYandexAppMetrica
 {
@@ -60,6 +61,18 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     }
 
     public override void ReportRevenue (YandexAppMetricaRevenue revenue)
+    {
+    }
+
+    public override void SetStatisticsSending (bool enabled)
+    {
+    }
+
+    public override void SendEventsBuffer ()
+    {
+    }
+
+    public override void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action)
     {
     }
 

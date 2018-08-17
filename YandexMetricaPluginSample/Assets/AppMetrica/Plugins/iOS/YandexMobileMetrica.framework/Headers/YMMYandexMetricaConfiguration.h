@@ -38,6 +38,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL handleFirstActivationAsUpdate;
 
+/** A boolean value indicating whether statistics sending to the AppMetrica server is enabled.
+
+ @note Disabling this option also turns off data sending from the reporters that initialized for different apiKey.
+
+ By default, the statistics sending is enabled.
+ */
+@property (nonatomic, assign) BOOL statisticsSending;
+
 /** Enable/disable location reporting to AppMetrica.
  If enabled and location set via setLocation: method - that location would be used.
  If enabled and location is not set via setLocation,

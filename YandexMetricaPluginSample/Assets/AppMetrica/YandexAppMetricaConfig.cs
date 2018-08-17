@@ -41,6 +41,8 @@ public struct YandexAppMetricaConfig
 
     public YandexAppMetricaPreloadInfo? PreloadInfo { get; set; }
 
+    public bool? StatisticsSending { get; set; }
+
     public YandexAppMetricaConfig (string apiKey)
     {
         ApiKey = apiKey;
@@ -53,6 +55,7 @@ public struct YandexAppMetricaConfig
         InstalledAppCollecting = null;
         HandleFirstActivationAsUpdate = null;
         PreloadInfo = null;
+        StatisticsSending = null;
     }
 }
 

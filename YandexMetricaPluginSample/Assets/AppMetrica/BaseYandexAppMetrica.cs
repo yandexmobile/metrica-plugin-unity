@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public abstract class BaseYandexAppMetrica : IYandexAppMetrica
 {
@@ -59,4 +60,10 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
     public abstract void ReportUserProfile (YandexAppMetricaUserProfile userProfile);
 
     public abstract void ReportRevenue (YandexAppMetricaRevenue revenue);
+
+    public abstract void SetStatisticsSending (bool enabled);
+
+    public abstract void SendEventsBuffer ();
+
+    public abstract void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action);
 }

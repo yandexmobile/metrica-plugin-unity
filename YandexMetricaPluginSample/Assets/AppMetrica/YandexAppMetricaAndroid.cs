@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 #if UNITY_ANDROID
 
@@ -101,6 +102,24 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         metricaClass.CallStatic ("reportRevenue", revenue.ToAndroidRevenue ());
     }
 
+    public override void SetStatisticsSending (bool enabled)
+    {
+        using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
+            var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
+            metricaClass.CallStatic ("setStatisticsSending", playerActivityContext, enabled);
+        }
+    }
+
+    public override void SendEventsBuffer ()
+    {
+        metricaClass.CallStatic ("sendEventsBuffer");
+    }
+
+    public override void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action)
+    {
+        metricaClass.CallStatic ("requestAppMetricaDeviceID", new YandexAppMetricaDeviceIDListenerAndroid (action));
+    }
+
     #endregion
 
     private string JsonStringFromDictionary (IDictionary dictionary)
@@ -151,6 +170,9 @@ public static class YandexAppMetricaExtensionsAndroid
                     preloadInfoBuilder.Call<AndroidJavaObject> ("setAdditionalParams", kvp.Key, kvp.Value);
                 }
                 builder.Call<AndroidJavaObject> ("withPreloadInfo", preloadInfoBuilder.Call<AndroidJavaObject> ("build"));
+            }
+            if (self.StatisticsSending.HasValue) {
+                builder.Call<AndroidJavaObject> ("withStatisticsSending", self.StatisticsSending.Value);
             }
 
             // Native crashes are currently not supported
@@ -259,6 +281,38 @@ public static class YandexAppMetricaExtensionsAndroid
             revenue = builder.Call<AndroidJavaObject> ("build");
         }
         return revenue;
+    }
+}
+
+public class YandexAppMetricaDeviceIDListenerAndroid : AndroidJavaProxy
+{
+    private readonly Action<string, YandexAppMetricaRequestDeviceIDError?> action;
+
+    public YandexAppMetricaDeviceIDListenerAndroid (Action<string, YandexAppMetricaRequestDeviceIDError?> action) 
+        : base ("com.yandex.metrica.AppMetricaDeviceIDListener")
+    {
+        this.action = action;
+    }
+
+    public void onLoaded(string deviceID) {
+        action.Invoke (deviceID, null);
+    }
+
+    public void onError(AndroidJavaObject reason) {
+        action.Invoke (null, ErrorFromAndroidReason (reason));
+    }
+
+    private YandexAppMetricaRequestDeviceIDError? ErrorFromAndroidReason (AndroidJavaObject reason) {
+        if (reason == null) {
+            return null;
+        }
+        try {
+            var reasonString = reason.Call<string> ("toString");
+            var error = Enum.Parse (typeof (YandexAppMetricaRequestDeviceIDError), reasonString);
+            return (YandexAppMetricaRequestDeviceIDError?) error;
+        } catch (ArgumentException) {
+            return YandexAppMetricaRequestDeviceIDError.UNKNOWN;
+        }
     }
 }
 

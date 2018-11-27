@@ -8,6 +8,11 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.2.0
+
+* Updated native SDKs *(iOS 3.4.0, Android 3.4.0)*
+* Fixed AppMetrica dependency integration
+
 ### Version 3.1.0
 
 * Updated native SDKs *(iOS 3.2.0, Android 3.2.2)*

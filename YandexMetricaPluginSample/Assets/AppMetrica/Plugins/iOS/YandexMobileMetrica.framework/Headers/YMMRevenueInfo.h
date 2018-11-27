@@ -84,6 +84,32 @@
  */
 - (instancetype)initWithPrice:(double)price currency:(NSString *)currency;
 
+/** Initializes the RevenueInfo object with the following values:
+ 
+ - price;
+ - currency;
+ - quantity;
+ - productID;
+ - transactionID;
+ - receiptData;
+ - payload.
+ 
+ @param price Price of the products purchased. It can be negative, e.g. for refunds. EXAMPLE: 0.99
+ @param currency Currency code of the purchase in the ISO 4217 format. The value should contain 3 Latin letters in uppercase. EXAMPLE: RUB
+ @param quantity Quantity of the products purchased.
+ @param productID ID of the product purchased.
+ @param transactionID Information about the in-app purchase order from App Store.
+ @param receiptData Details about the in-app purchase order from App Store.
+ @param payload Additional information to be passed about the purchase.
+ */
+- (instancetype)initWithPrice:(double)price
+                     currency:(NSString *)currency
+                     quantity:(NSUInteger)quantity
+                    productID:(NSString *)productID
+                transactionID:(NSString *)transactionID
+                  receiptData:(NSData *)receiptData
+                      payload:(NSDictionary *)payload;
+
 @end
 
 /** Mutable version of the `YMMRevenueInfo` class.*/

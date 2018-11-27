@@ -8,10 +8,7 @@
 
 #import <YandexMobileMetrica/YandexMobileMetrica.h>
 #import <CoreLocation/CoreLocation.h>
-
-typedef const void *YMMAction;
-
-typedef void (*YMMRequestDeviceIDCallbackDelegate)(YMMAction action, const char *deviceId, const char *errorString);
+#import "YMMBridge.h"
 
 static NSString *const kYMMUnityExceptionName = @"UnityException";
 

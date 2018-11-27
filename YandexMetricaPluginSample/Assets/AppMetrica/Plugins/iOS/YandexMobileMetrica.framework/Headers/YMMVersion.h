@@ -10,9 +10,9 @@
 #define __YMM_VERSION_H__
 
 #define YMM_VERSION_MAJOR 3
-#define YMM_VERSION_MINOR 2
+#define YMM_VERSION_MINOR 4
 #define YMM_VERSION_PATCH 0
 
-#define YMM_BUILD_NUMBER 11768
+#define YMM_BUILD_NUMBER 12950
 
 #endif // __YMM_VERSION_H__

@@ -30,6 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, readonly) NSArray<YMMUserProfileUpdate *> *updates;
 
+/** Initialize user profile with specified applied attributes.
+
+ @param updates An array with profile updates
+ */
+- (instancetype)initWithUpdates:(NSArray<YMMUserProfileUpdate *> *)updates;
+
 @end
 
 /** Mutable version of the `YMMUserProfile` class.

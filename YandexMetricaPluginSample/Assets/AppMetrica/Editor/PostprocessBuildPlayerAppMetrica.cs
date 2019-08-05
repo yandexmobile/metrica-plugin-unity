@@ -59,7 +59,11 @@ public class PostprocessBuildPlayerAppMetrica
             var project = new PBXProject ();
             project.ReadFromString (File.ReadAllText (projectPath));
 
+#if UNITY_2019_3_OR_NEWER
+            var target = project.GetUnityFrameworkTargetGuid();
+#else
             var target = project.TargetGuidByName ("Unity-iPhone");
+#endif
 
             foreach (var frameworkName in StrongFrameworks) {
                 project.AddFrameworkToProject (target, frameworkName + ".framework", false);

@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
     YMMYandexMetricaEventErrorCodeJsonSerializationError = 1002,
     YMMYandexMetricaEventErrorCodeInvalidRevenueInfo = 1003,
     YMMYandexMetricaEventErrorCodeEmptyUserProfile = 1004,
+    YMMYandexMetricaEventErrorCodeNoCrashLibrary = 1005,
 };
 
 @interface YMMYandexMetrica : NSObject
@@ -158,8 +159,9 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 /**
  * Sets referral URL for this installation. This might be required to track some specific traffic sources like Facebook.
  * @param url referral URL value.
+ * @warning Referral URL reporting is no longer available.
  */
-+ (void)reportReferralUrl:(NSURL *)url;
++ (void)reportReferralUrl:(NSURL *)url DEPRECATED_MSG_ATTRIBUTE("Referral URL reporting is no longer available");
 
 /** Sends all stored events from the buffer.
 
@@ -170,6 +172,21 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  @warning Frequent use of the method can lead to increasing outgoing internet traffic and energy consumption.
  */
 + (void)sendEventsBuffer;
+
+/** Resumes the last session or creates a new one if it has been expired.
+ 
+ @warning You should disable the automatic tracking before using this method.
+ See the sessionsAutoTracking property of YMMYandexMetricaConfiguration.
+ */
++ (void)resumeSession;
+
+/** Pauses the current session.
+ All events reported after calling this method and till the session timeout will still join this session.
+
+ @warning You should disable the automatic tracking before using this method.
+ See the sessionsAutoTracking property of YMMYandexMetricaConfiguration.
+ */
++ (void)pauseSession;
 
 @end
 

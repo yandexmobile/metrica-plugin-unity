@@ -38,6 +38,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL handleFirstActivationAsUpdate;
 
+/** Whether activation of AppMetrica should be considered as the start of a session.
+ If this option is disabled session starts at UIApplicationDidBecomeActiveNotification.
+
+ The option is disabled by default. Enable this property if you want events that are reported after activation to join
+ the current session.
+ */
+@property (nonatomic, assign) BOOL handleActivationAsSessionStart;
+
+/** Whether AppMetrica should automatically track session starts and ends.
+ AppMetrica uses UIApplicationDidBecomeActiveNotification and UIApplicationWillResignActiveNotification notifications
+ to track sessions.
+
+ The maximum length of the session is 24 hours. To continue the session after 24 hours, you should manually
+ invoke the resumeSession method.
+
+ The option is enabled by default. If the option is disabled, you should manually control the session
+ using pauseSession and resumeSession methods.
+ */
+@property (nonatomic, assign) BOOL sessionsAutoTracking;
+
 /** A boolean value indicating whether statistics sending to the AppMetrica server is enabled.
 
  @note Disabling this option also turns off data sending from the reporters that initialized for different apiKey.

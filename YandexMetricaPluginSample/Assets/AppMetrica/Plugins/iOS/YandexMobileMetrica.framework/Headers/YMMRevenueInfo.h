@@ -1,6 +1,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /** The class to store revenue data.
  It enables revenue tracking from in-app purchases and other purchases in your application.
 
@@ -16,8 +18,18 @@
  It can be negative, e.g. for refunds.
 
  EXAMPLE: 0.99
+ @warning This property is deprecated. Use priceDecimal instead.
  */
-@property (nonatomic, assign, readonly) double price;
+@property (nonatomic, assign, readonly) double price DEPRECATED_MSG_ATTRIBUTE("Use priceDecimal");
+
+/** Price of the products purchased.
+ It can be negative, e.g. for refunds.
+
+ @warning Maximal supported accuracy(a scale of decimal number) is 6 digits in fraction.
+
+ EXAMPLE: 0.99
+ */
+@property (nonatomic, strong, nullable, readonly) NSDecimalNumber *priceDecimal;
 
 /** Currency code of the purchase in the ISO 4217 format.
  The value should contain 3 Latin letters in uppercase.
@@ -39,7 +51,7 @@
 
  @warning The value can contain up to 200 characters.
  */
-@property (nonatomic, copy, readonly) NSString *productID;
+@property (nonatomic, copy, nullable, readonly) NSString *productID;
 
 /** Information about the in-app purchase order from App Store.
  It should contain the `transactionIdentifier` string value of the `SKPaymentTransaction` class.
@@ -49,7 +61,7 @@
  For more information, see
  https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411288-transactionidentifier
  */
-@property (nonatomic, copy, readonly) NSString *transactionID;
+@property (nonatomic, copy, nullable, readonly) NSString *transactionID;
 
 /** Details about the in-app purchase order from App Store.
  @code
@@ -62,7 +74,7 @@
  For more information, see
  https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html
  */
-@property (nonatomic, copy, readonly) NSData *receiptData;
+@property (nonatomic, copy, nullable, readonly) NSData *receiptData;
 
 /** Additional information to be passed about the purchase.
  It should contain the `NSDictionary` object that can be converted to valid JSON.
@@ -70,7 +82,7 @@
 
  @warning The maximum size of the value is 30 KB.
  */
-@property (nonatomic, copy, readonly) NSDictionary *payload;
+@property (nonatomic, copy, nullable, readonly) NSDictionary *payload;
 
 /** Use the `initWithPrice:currency:` method instead.
  */
@@ -78,11 +90,23 @@
 
 /** Initializes the RevenueInfo object with the specified price value.
 
+ @warning This initializer is deprecated. Use initWithPriceDecimal:currency: instead.
+
  @param price Price of the products purchased. It can be negative, e.g. for refunds. EXAMPLE: 0.99
  @param currency Currency code of the purchase in the ISO 4217 format.
  The value should contain 3 Latin letters in uppercase. EXAMPLE: RUB
  */
-- (instancetype)initWithPrice:(double)price currency:(NSString *)currency;
+- (instancetype)initWithPrice:(double)price currency:(NSString *)currency DEPRECATED_MSG_ATTRIBUTE("Use initWithPriceDecimal:currency:");
+
+/** Initializes the RevenueInfo object with the specified price value.
+
+ @warning Maximal supported accuracy(a scale of decimal number) of priceDecimal is 6 digits in fraction.
+
+ @param priceDecimal Price of the products purchased. It can be negative, e.g. for refunds. EXAMPLE: 0.99
+ @param currency Currency code of the purchase in the ISO 4217 format.
+ The value should contain 3 Latin letters in uppercase. EXAMPLE: RUB
+ */
+- (instancetype)initWithPriceDecimal:(NSDecimalNumber *)priceDecimal currency:(NSString *)currency;
 
 /** Initializes the RevenueInfo object with the following values:
  
@@ -105,10 +129,38 @@
 - (instancetype)initWithPrice:(double)price
                      currency:(NSString *)currency
                      quantity:(NSUInteger)quantity
-                    productID:(NSString *)productID
-                transactionID:(NSString *)transactionID
-                  receiptData:(NSData *)receiptData
-                      payload:(NSDictionary *)payload;
+                    productID:(nullable NSString *)productID
+                transactionID:(nullable NSString *)transactionID
+                  receiptData:(nullable NSData *)receiptData
+                      payload:(nullable NSDictionary *)payload DEPRECATED_MSG_ATTRIBUTE("Use initWithPriceDecimal:...");
+
+/** Initializes the RevenueInfo object with the following values:
+
+ - priceDecimal;
+ - currency;
+ - quantity;
+ - productID;
+ - transactionID;
+ - receiptData;
+ - payload.
+
+ @warning Maximal supported accuracy(a scale of decimal number) of priceDecimal is 6 digits in fraction.
+
+ @param priceDecimal Price of the products purchased. It can be negative, e.g. for refunds. EXAMPLE: 0.99
+ @param currency Currency code of the purchase in the ISO 4217 format. The value should contain 3 Latin letters in uppercase. EXAMPLE: RUB
+ @param quantity Quantity of the products purchased.
+ @param productID ID of the product purchased.
+ @param transactionID Information about the in-app purchase order from App Store.
+ @param receiptData Details about the in-app purchase order from App Store.
+ @param payload Additional information to be passed about the purchase.
+ */
+- (instancetype)initWithPriceDecimal:(NSDecimalNumber *)priceDecimal
+                            currency:(NSString *)currency
+                            quantity:(NSUInteger)quantity
+                           productID:(nullable NSString *)productID
+                       transactionID:(nullable NSString *)transactionID
+                         receiptData:(nullable NSData *)receiptData
+                             payload:(nullable NSDictionary *)payload;
 
 @end
 
@@ -160,3 +212,5 @@
 @property (nonatomic, copy) NSDictionary *payload;
 
 @end
+
+NS_ASSUME_NONNULL_END

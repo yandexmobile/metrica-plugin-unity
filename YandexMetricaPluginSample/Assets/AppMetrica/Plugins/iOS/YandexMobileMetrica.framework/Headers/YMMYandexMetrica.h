@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
     YMMYandexMetricaEventErrorCodeInvalidRevenueInfo = 1003,
     YMMYandexMetricaEventErrorCodeEmptyUserProfile = 1004,
     YMMYandexMetricaEventErrorCodeNoCrashLibrary = 1005,
+    YMMYandexMetricaEventErrorCodeInternalInconsistency = 1006,
 };
 
 @interface YMMYandexMetrica : NSObject
@@ -132,7 +133,6 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 
 /** Handles the URL that has opened the application.
  Reports the URL for deep links tracking.
- URL scheme should be registered beforehand via `enableTrackingWithUrlScheme:` method for tracking to work correctly.
 
  @param url URL that has opened the application.
  */
@@ -159,9 +159,8 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 /**
  * Sets referral URL for this installation. This might be required to track some specific traffic sources like Facebook.
  * @param url referral URL value.
- * @warning Referral URL reporting is no longer available.
  */
-+ (void)reportReferralUrl:(NSURL *)url DEPRECATED_MSG_ATTRIBUTE("Referral URL reporting is no longer available");
++ (void)reportReferralUrl:(NSURL *)url;
 
 /** Sends all stored events from the buffer.
 

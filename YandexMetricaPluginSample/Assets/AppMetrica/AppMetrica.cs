@@ -1,6 +1,6 @@
 /*
  * Version for Unity
- * © 2015-2019 YANDEX
+ * © 2015-2020 YANDEX
  * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * https://yandex.com/legal/appmetrica_sdk_agreement/
@@ -16,7 +16,7 @@ using System.Collections;
 
 public class AppMetrica : MonoBehaviour
 {
-    public const string VERSION = "3.4.0";
+    public const string VERSION = "3.5.0";
 
     [SerializeField]
     private string ApiKey;

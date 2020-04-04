@@ -1,6 +1,6 @@
 ﻿/*
  * Version for Unity
- * © 2015-2019 YANDEX
+ * © 2015-2020 YANDEX
  * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * https://yandex.com/legal/appmetrica_sdk_agreement/
@@ -9,11 +9,11 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using System.IO;
+using System.Collections;
 #if UNITY_IOS
 using UnityEditor.iOS.Xcode;
 #endif
-using System.IO;
-using System.Collections;
 
 /// <summary>
 /// Postprocess build player for Metrica.
@@ -50,7 +50,7 @@ public class PostprocessBuildPlayerAppMetrica
     [PostProcessBuild]
     public static void OnPostprocessBuild (BuildTarget buildTarget, string path)
     {
-#if UNITY_IOS
+#if UNITY_IPHONE || UNITY_IOS
 #if UNITY_5 || UNITY_2017_1_OR_NEWER
         var expectedTarget = BuildTarget.iOS;
 #else

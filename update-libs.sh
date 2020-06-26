@@ -26,7 +26,7 @@ updateAndroid() {
 	echo "Downloading AppMetrica v$newVersion"
 	local downloadUrl=$repoUrl/$newVersion/mobmetricalib-${newVersion}.aar
 	echo "URL: $downloadUrl"
-	wget -O "$libsDir/$newFileName" -- "$downloadUrl" 2>/dev/null
+	wget -O "$libsDir/$newFileName" -- "$downloadUrl" #2>/dev/null
 
 	echo "Removing old AppMetrica: $oldFileName"
 	rm "$libsDir/$oldFileName"
@@ -41,7 +41,7 @@ updateAndroid() {
 updateIos() {
 	echo "Update AppMetrica SDK iOS"
 
-	pod repo update master
+	pod repo update
 
 	local libsDir="$NATIVE_SDK_DIR/iOS"
 	local metricaSpec=$(pod spec cat YandexMobileMetrica)

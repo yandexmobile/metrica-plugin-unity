@@ -76,6 +76,14 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     {
     }
 
+    public override void ReportReferralUrl(string referralUrl)
+    {
+    }
+    
+    public override void ReportAppOpen (string deeplink)
+    {
+    }
+
     #endregion
 
 }

@@ -8,6 +8,12 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.5.1
+* Added a method to report referral url
+* Added a method to report open url
+* Added property PriceDecimal to YandexAppMetricaRevenue. Use it instead of deprecated Price
+* Simplified connection of the iAd framework for iOS
+
 ### Version 3.5.0
 
 * Updated native SDKs *(iOS 3.9.4, Android 3.13.1)*

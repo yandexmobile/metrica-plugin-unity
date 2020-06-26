@@ -119,6 +119,20 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
     {
         metricaClass.CallStatic ("requestAppMetricaDeviceID", new YandexAppMetricaDeviceIDListenerAndroid (action));
     }
+    
+    public override void ReportAppOpen (string deeplink)
+    {
+        if (string.IsNullOrEmpty(deeplink) == false) {
+            metricaClass.CallStatic("reportAppOpen", deeplink);
+        }
+    }
+
+    public override void ReportReferralUrl (string referralUrl)
+    {
+        if (string.IsNullOrEmpty(referralUrl) == false) {
+            metricaClass.CallStatic("reportReferralUrl", referralUrl);
+        }
+    }
 
     #endregion
 
@@ -269,11 +283,17 @@ public static class YandexAppMetricaExtensionsAndroid
         return currency;
     }
 
-    public static AndroidJavaObject ToAndroidRevenue (this YandexAppMetricaRevenue self) 
+    public static AndroidJavaObject ToAndroidRevenue (this YandexAppMetricaRevenue self)
     {
         AndroidJavaObject revenue = null;
         using (var revenueClass = new AndroidJavaClass ("com.yandex.metrica.Revenue")) {
-            var builder = revenueClass.CallStatic<AndroidJavaObject> ("newBuilder", self.Price, self.Currency.ToAndroidCurrency ());
+            AndroidJavaObject builder;
+            if (self.PriceDecimal.HasValue) {
+                var priceMicros = decimal.ToInt64(self.PriceDecimal.Value * 1000000m);
+                builder = revenueClass.CallStatic<AndroidJavaObject> ("newBuilderWithMicros", priceMicros, self.Currency.ToAndroidCurrency ());
+            } else {
+                builder = revenueClass.CallStatic<AndroidJavaObject> ("newBuilder", self.Price, self.Currency.ToAndroidCurrency ());
+            }
             builder.Call<AndroidJavaObject> ("withQuantity", self.Quantity.ToAndroidInteger ());
             builder.Call<AndroidJavaObject> ("withProductID", self.ProductID);
             builder.Call<AndroidJavaObject> ("withPayload", self.Payload);

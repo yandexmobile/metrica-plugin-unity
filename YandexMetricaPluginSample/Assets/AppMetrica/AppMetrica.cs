@@ -16,7 +16,7 @@ using System.Collections;
 
 public class AppMetrica : MonoBehaviour
 {
-    public const string VERSION = "3.5.0";
+    public const string VERSION = "3.5.1";
 
     [SerializeField]
     private string ApiKey;

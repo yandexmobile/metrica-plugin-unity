@@ -36,4 +36,7 @@ void ymm_reportUsertProfileJSON(char *userProfileJSON);
 
 void ymm_reportRevenueJSON(char *revenueJSON);
 
+void ymm_reportReferralUrl(char *referralUrl);
+void ymm_reportAppOpen(char *deeplink);
+
 char *ymm_getLibraryVersion();

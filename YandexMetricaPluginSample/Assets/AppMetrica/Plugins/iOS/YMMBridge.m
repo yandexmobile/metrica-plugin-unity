@@ -388,9 +388,18 @@ YMMRevenueInfo *ymm_revenueFromDictionary(NSDictionary *revenueDictionary)
     if (revenueDictionary == nil) {
         return nil;
     }
-    double price = [revenueDictionary[@"Price"] doubleValue];
     NSString *currency = revenueDictionary[@"Currency"];
-    YMMMutableRevenueInfo *revenue = [[YMMMutableRevenueInfo alloc] initWithPrice:price currency:currency];
+    YMMMutableRevenueInfo *revenue = nil;
+    if (revenueDictionary[@"PriceDecimal"] != nil) {
+        NSString *priceDecimalString = revenueDictionary[@"PriceDecimal"];
+        NSDictionary *locale = [NSDictionary dictionaryWithObject:@"." forKey:NSLocaleDecimalSeparator];
+        NSDecimalNumber *priceDecimal = [NSDecimalNumber decimalNumberWithString:priceDecimalString locale:locale];
+        revenue = [[YMMMutableRevenueInfo alloc] initWithPriceDecimal:priceDecimal currency:currency];
+    }
+    else {
+        double price = [revenueDictionary[@"Price"] doubleValue];
+        revenue = [[YMMMutableRevenueInfo alloc] initWithPrice:price currency:currency];
+    }
 
     if (revenueDictionary[@"Quantity"] != nil) {
         [revenue setQuantity:[revenueDictionary[@"Quantity"] unsignedIntegerValue]];
@@ -453,4 +462,16 @@ void ymm_requestAppMetricaDeviceID(YMMRequestDeviceIDCallbackDelegate callbackDe
             callbackDelegate(actionPtr, [appMetricaDeviceID UTF8String], ymm_stringFromRequestDeviceIDError(error));
         }
     }];
+}
+
+void ymm_reportReferralUrl(char *referralUrl)
+{
+    NSString *referralUrlString = ymm_stringFromCString(referralUrl);
+    [YMMYandexMetrica reportReferralUrl:[NSURL URLWithString:referralUrlString]];
+}
+
+void ymm_reportAppOpen(char *deeplink)
+{
+    NSString *deeplinkString = ymm_stringFromCString(deeplink);
+    [YMMYandexMetrica handleOpenURL:[NSURL URLWithString:deeplinkString]];
 }

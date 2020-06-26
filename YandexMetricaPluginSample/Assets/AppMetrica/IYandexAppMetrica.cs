@@ -119,4 +119,7 @@ public interface IYandexAppMetrica
     void SendEventsBuffer ();
 
     void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action);
+
+    void ReportReferralUrl (string referralUrl);
+    void ReportAppOpen (string deeplink);
 }

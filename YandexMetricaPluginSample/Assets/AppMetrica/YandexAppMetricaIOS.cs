@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
+using System.Globalization;
 
 #if UNITY_IPHONE || UNITY_IOS
 
@@ -58,6 +59,12 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     [DllImport ("__Internal")]
     private static extern void ymm_requestAppMetricaDeviceID (YMMRequestDeviceIDCallbackDelegate callbackDelegate, IntPtr actionPtr);
 
+    [DllImport("__Internal")]
+    private static extern void ymm_reportReferralUrl (string referralUrl);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_reportAppOpen (string deeplink);
+    
     private delegate void YMMRequestDeviceIDCallbackDelegate (IntPtr actionPtr, string deviceId, string errorString);
 
     #region IYandexAppMetrica implementation
@@ -148,6 +155,16 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     public override void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action)
     {
         ymm_requestAppMetricaDeviceID (RequestDeviceIDCallback, ActionToIntPtr (action));
+    }
+    
+    public override void ReportAppOpen (string deeplink)
+    {
+        ymm_reportAppOpen (deeplink);
+    }
+
+    public override void ReportReferralUrl (string referralUrl)
+    {
+        ymm_reportReferralUrl (referralUrl);
     }
 
     #endregion
@@ -280,11 +297,16 @@ public static class YandexAppMetricaExtensionsIOS
     public static Hashtable ToHashtable (this YandexAppMetricaRevenue self)
     {
         var data = new Hashtable {
-            { "Price", self.Price },
             { "Currency", self.Currency }
         };
+        if (self.Price.HasValue) {
+            data["Price"] = self.Price.Value;
+        }
+        if (self.PriceDecimal.HasValue) {
+            data["PriceDecimal"] = self.PriceDecimal.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+        }
         if (self.Quantity.HasValue) {
-            data ["Quantity"] = self.Quantity.Value;
+            data["Quantity"] = self.Quantity.Value;
         }
         if (self.ProductID != null) {
             data["ProductID"] = self.ProductID;

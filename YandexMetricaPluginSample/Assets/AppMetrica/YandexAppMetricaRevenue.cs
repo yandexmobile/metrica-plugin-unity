@@ -6,12 +6,16 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
+using System;
 using UnityEngine;
 
 [System.Serializable]
 public struct YandexAppMetricaRevenue
 {
-    public double Price { get; private set; }
+    [Obsolete("The field is deprecated. Use the PriceMicros field instead.")]
+    public double? Price { get; private set; }
+
+    public decimal? PriceDecimal { get; private set; }
 
     public int? Quantity { get; set; }
 
@@ -23,9 +27,22 @@ public struct YandexAppMetricaRevenue
 
     public string Payload { get; set; }
 
+    [Obsolete("Outdated constructor. Use the YandexAppMetricaRevenue(decimal priceDecimal, string currency) constructor instead.")]
     public YandexAppMetricaRevenue (double price, string currency)
     {
         Price = price;
+        PriceDecimal = null;
+        Quantity = null;
+        Currency = currency;
+        ProductID = null;
+        Receipt = null;
+        Payload = null;
+    }
+
+    public YandexAppMetricaRevenue(decimal priceDecimal, string currency)
+    {
+        Price = null;
+        PriceDecimal = priceDecimal;
         Quantity = null;
         Currency = currency;
         ProductID = null;

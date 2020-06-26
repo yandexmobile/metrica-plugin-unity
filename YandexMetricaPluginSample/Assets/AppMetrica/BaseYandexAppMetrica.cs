@@ -66,4 +66,8 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
     public abstract void SendEventsBuffer ();
 
     public abstract void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action);
+
+    public abstract void ReportReferralUrl (string referralUrl);
+    
+    public abstract void ReportAppOpen (string deeplink);
 }

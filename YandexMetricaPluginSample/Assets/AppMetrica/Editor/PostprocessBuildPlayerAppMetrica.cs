@@ -23,6 +23,9 @@ using UnityEditor.iOS.Xcode;
 public class PostprocessBuildPlayerAppMetrica
 {
     private static readonly string[] StrongFrameworks = {
+#if APP_METRICA_ADD_IAD_FRAMEWORK
+        "iAd",
+#endif
         "SystemConfiguration",
         "UIKit",
         "Foundation",

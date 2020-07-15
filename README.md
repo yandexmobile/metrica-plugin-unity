@@ -8,7 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.6.0
+
+* Updated native SDKs *(iOS 3.11.1, Android 3.14.3)*
+* Added the configuration property AppForKids for applications from App Store Kids' Category.
+
 ### Version 3.5.1
+
 * Added a method to report referral url
 * Added a method to report open url
 * Added property PriceDecimal to YandexAppMetricaRevenue. Use it instead of deprecated Price

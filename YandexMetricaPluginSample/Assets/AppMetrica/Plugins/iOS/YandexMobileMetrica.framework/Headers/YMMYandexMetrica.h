@@ -7,7 +7,14 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "YMMCompletionBlocks.h"
+
+#if __has_include("YMMCompletionBlocks.h")
+    #import "YMMCompletionBlocks.h"
+    #import "YMMErrorRepresentable.h"
+#else
+    #import <YandexMobileMetrica/YMMCompletionBlocks.h>
+    #import <YandexMobileMetrica/YMMErrorRepresentable.h>
+#endif
 
 @class CLLocation;
 @class YMMYandexMetricaConfiguration;
@@ -32,7 +39,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 
 @interface YMMYandexMetrica : NSObject
 
-/** Starting the statistics collection process.
+/** Starts the statistics collection process.
 
  @param configuration Configuration combines all AppMetrica settings in one place.
  Configuration initialized with unique application key that is issued during application registration in AppMetrica.
@@ -41,7 +48,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  */
 + (void)activateWithConfiguration:(YMMYandexMetricaConfiguration *)configuration;
 
-/** Reporting custom event.
+/** Reports a custom event.
 
  @param message Short name or description of the event.
  @param onFailure Block to be executed if an error occurs while reporting, the error is passed as block argument.
@@ -49,7 +56,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
 + (void)reportEvent:(NSString *)message
           onFailure:(nullable void (^)(NSError *error))onFailure;
 
-/** Reporting custom event with additional parameters.
+/** Reports a custom event with additional parameters.
 
  @param message Short name or description of the event.
  @param params Dictionary of name/value pairs that should be sent to the server.
@@ -59,7 +66,7 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
          parameters:(nullable NSDictionary *)params
           onFailure:(nullable void (^)(NSError *error))onFailure;
 
-/** Reporting custom error messages.
+/** Reports custom error messages.
 
  @param message Short name or description of the error
  @param exception Exception contains an NSException object that must be passed to the server. It can take the nil value.
@@ -67,7 +74,68 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  */
 + (void)reportError:(NSString *)message
           exception:(nullable NSException *)exception
-          onFailure:(nullable void (^)(NSError *error))onFailure;
+          onFailure:(nullable void (^)(NSError *error))onFailure
+DEPRECATED_MSG_ATTRIBUTE("Use reportError:options:onFailure: or reportNSError:options:onFailure:");
+
+/** Reports an error of the `NSError` type.
+ AppMetrica uses domain and code for grouping errors.
+ 
+ Limits for `NSError`:
+ - 200 characters for `domain`;
+ - 50 key-value pairs for `userInfo`. 100 characters for a key length, 2000 for a value length;
+ - 10 underlying errors using `NSUnderlyingErrorKey` as a key in `userInfo`;
+ - 200 stack frames in a backtrace using `YMMBacktraceErrorKey` as a key in `userInfo`.
+ If the value exceeds the limit, AppMetrica truncates it.
+ 
+ @note You can also report custom backtrace in `NSError`, see the `YMMBacktraceErrorKey` constant.
+
+ @param error The error to report.
+ @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
+ */
++ (void)reportNSError:(NSError *)error
+            onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(nserror:onFailure:));
+
+/** Reports an error of the `NSError` type.
+ AppMetrica uses domain and code for grouping errors.
+ Use this method to set the reporting options.
+ 
+ Limits for `NSError`:
+ - 200 characters for `domain`;
+ - 50 key-value pairs for `userInfo`. 100 characters for a key length, 2000 for a value length;
+ - 10 underlying errors using `NSUnderlyingErrorKey` as a key in `userInfo`;
+ - 200 stack frames in a backtrace using `YMMBacktraceErrorKey` as a key in `userInfo`.
+ If the value exceeds the limit, AppMetrica truncates it.
+ 
+ @note You can also report custom backtrace in `NSError`, see the `YMMBacktraceErrorKey` constant.
+ 
+ @param error The error to report.
+ @param options The options of error reporting.
+ @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
+ */
++ (void)reportNSError:(NSError *)error
+              options:(YMMErrorReportingOptions)options
+            onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(nserror:options:onFailure:));
+
+/** Reports a custom error.
+ @note See `YMMErrorRepresentable` for more information.
+
+ @param error The error to report.
+ @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
+ */
++ (void)reportError:(id<YMMErrorRepresentable>)error
+          onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(error:onFailure:));
+
+/** Reports a custom error.
+ Use this method to set the reporting options.
+ @note See `YMMErrorRepresentable` for more information.
+
+ @param error The error to report.
+ @param options The options of error reporting.
+ @param onFailure Block to be executed if an error occurres while reporting, the error is passed as block argument.
+ */
++ (void)reportError:(id<YMMErrorRepresentable>)error
+            options:(YMMErrorReportingOptions)options
+          onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(error:options:onFailure:));
 
 /** Sends information about the user profile.
  
@@ -186,6 +254,16 @@ typedef NS_ENUM(NSInteger, YMMYandexMetricaEventErrorCode) {
  See the sessionsAutoTracking property of YMMYandexMetricaConfiguration.
  */
 + (void)pauseSession;
+
+/** Sets a key-value pair associated with errors and crashes.
+ @note
+ AppMetrica uses it as additional information for further unhandled exceptions.
+ If the value is nil, AppMetrica removes the previously set key-value pair.
+
+ @param value Error environment value.
+ @param key Error environment key.
+ */
++ (void)setErrorEnvironmentValue:(nullable NSString *)value forKey:(NSString *)key;
 
 @end
 

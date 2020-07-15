@@ -10,12 +10,12 @@
 #define __YMM_VERSION_H__
 
 #define YMM_VERSION_MAJOR 3
-#define YMM_VERSION_MINOR 9
-#define YMM_VERSION_PATCH 4
+#define YMM_VERSION_MINOR 11
+#define YMM_VERSION_PATCH 1
 
 // This line is uncommented in pre-releases.
 // #define YMM_VERSION_PRERELEASE_ID "rc.1"
 
-#define YMM_BUILD_NUMBER 16684
+#define YMM_BUILD_NUMBER 18489
 
 #endif // __YMM_VERSION_H__

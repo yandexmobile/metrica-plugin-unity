@@ -42,6 +42,11 @@ public struct YandexAppMetricaConfig
     public YandexAppMetricaPreloadInfo? PreloadInfo { get; set; }
 
     public bool? StatisticsSending { get; set; }
+    
+    /// <summary>
+    ///  Only iOS
+    /// </summary>
+    public bool? AppForKids { get; set; }
 
     public YandexAppMetricaConfig (string apiKey)
     {
@@ -56,6 +61,7 @@ public struct YandexAppMetricaConfig
         HandleFirstActivationAsUpdate = null;
         PreloadInfo = null;
         StatisticsSending = null;
+        AppForKids = null;
     }
 }
 

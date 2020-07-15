@@ -80,6 +80,9 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
     if (configDictionary[@"StatisticsSending"] != nil) {
         config.statisticsSending = [configDictionary[@"StatisticsSending"] boolValue];
     }
+    if (configDictionary[@"AppForKids"] != nil) {
+        config.appForKids = [configDictionary[@"AppForKids"] boolValue];
+    }
 
     return config;
 }

@@ -260,6 +260,9 @@ public static class YandexAppMetricaExtensionsIOS
         if (self.StatisticsSending.HasValue) {
             data["StatisticsSending"] = self.StatisticsSending.Value;
         }
+        if (self.AppForKids.HasValue) {
+            data["AppForKids"] = self.AppForKids.Value;
+        }
 
         return data;
     }

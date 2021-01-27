@@ -142,6 +142,43 @@ void ymm_reportError(char *condition, char *stackTrace)
     [YMMYandexMetrica reportError:conditionString exception:exception onFailure:nil];
 }
 
+void ymm_reportErrorWithIdentifier(char *groupIdentifier, char *condition, char *stackTrace) 
+{
+    NSString *groupIdentifierString = ymm_stringFromCString(groupIdentifier);
+    NSString *conditionString = ymm_stringFromCString(condition);
+    NSString *stackTraceString = ymm_stringFromCString(stackTrace);
+
+    NSString *message = [NSString stringWithFormat:@"%@\n%@", conditionString, stackTraceString];
+    YMMError *error = [YMMError errorWithIdentifier:groupIdentifierString message:message parameters:nil];
+    [YMMYandexMetrica reportError:error onFailure:nil];
+}
+
+void ymm_reportErrorWithException(char *groupIdentifier, char *condition, char *exceptionJson)
+{
+    NSString *groupIdentifierString = ymm_stringFromCString(groupIdentifier);
+    NSString *conditionString = ymm_stringFromCString(condition);
+    NSError *errorParsing = nil;
+    NSString *exceptionJsonString = ymm_stringFromCString(exceptionJson);
+    NSDictionary *exceptionDictionary = ymm_dictionaryFromJSONString(exceptionJsonString, &errorParsing);
+
+    if (errorParsing == nil && ymm_isDictionaryOrNil(exceptionDictionary)) {
+        NSString *message;
+        if (exceptionDictionary == nil) {
+            message = [NSString stringWithFormat:@"%@", conditionString];
+        }
+        else {
+            message = [NSString stringWithFormat:@"%@\nC# Exception:\n%@: %@\n%@",
+                       conditionString, exceptionDictionary[@"type"], exceptionDictionary[@"message"],
+                       exceptionDictionary[@"stacktrace"]];
+        }
+        YMMError *error = [YMMError errorWithIdentifier:groupIdentifierString message:message parameters:nil];
+        [YMMYandexMetrica reportError:error onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid exception json for report error to AppMetrica %@", exceptionJsonString);
+    }
+}
+
 void ymm_setLocationTracking(bool enabled)
 {
     [YMMYandexMetrica setLocationTracking:(BOOL)enabled];
@@ -477,4 +514,9 @@ void ymm_reportAppOpen(char *deeplink)
 {
     NSString *deeplinkString = ymm_stringFromCString(deeplink);
     [YMMYandexMetrica handleOpenURL:[NSURL URLWithString:deeplinkString]];
+}
+
+void ymm_putErrorEnvironmentValue(char *key, char *value)
+{
+    [YMMYandexMetrica setErrorEnvironmentValue:ymm_stringFromCString(value) forKey:ymm_stringFromCString(key)];
 }

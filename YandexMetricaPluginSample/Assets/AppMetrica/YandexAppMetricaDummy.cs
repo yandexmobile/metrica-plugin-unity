@@ -36,7 +36,19 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     {
     }
 
+    public override void ReportEvent (string message, string json)
+    {
+    }
+
     public override void ReportError (string condition, string stackTrace)
+    {
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, string stackTrace)
+    {
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, Exception exception)
     {
     }
 
@@ -81,6 +93,10 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     }
     
     public override void ReportAppOpen (string deeplink)
+    {
+    }
+
+    public override void PutErrorEnvironmentValue (string key, string value)
     {
     }
 

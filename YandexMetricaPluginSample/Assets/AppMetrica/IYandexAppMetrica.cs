@@ -61,6 +61,8 @@ public interface IYandexAppMetrica
     /// <param name="message">Report message.</param>
     /// <param name="parameters">Custom parameters.</param>
     void ReportEvent (string message, Dictionary<string, object> parameters);
+    
+    void ReportEvent (string message, string json);
 
     /// <summary>
     /// <para>Reports the error.</para>
@@ -71,6 +73,10 @@ public interface IYandexAppMetrica
     /// <param name="condition">Report message.</param>
     /// <param name="stackTrace">Exception stack trace.</param>
     void ReportError (string condition, string stackTrace);
+
+    void ReportError (string groupIdentifier, string condition, string stackTrace);
+    
+    void ReportError (string groupIdentifier, string condition, Exception exception);
 
     /// <summary>
     /// <para>Sets the track location enabled.</para>
@@ -122,4 +128,6 @@ public interface IYandexAppMetrica
 
     void ReportReferralUrl (string referralUrl);
     void ReportAppOpen (string deeplink);
+
+    void PutErrorEnvironmentValue (string key, string value);
 }

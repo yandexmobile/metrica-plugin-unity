@@ -8,6 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.7.0
+
+* Updated native SDKs *(iOS 3.14.0, Android 3.18.0)*
+* Added a method to report event with json string value
+* Added a method to set error environment
+* Added a method to report error with identifier
+
 ### Version 3.6.0
 
 * Updated native SDKs *(iOS 3.11.1, Android 3.14.3)*

@@ -16,7 +16,7 @@ using System.Collections;
 
 public class AppMetrica : MonoBehaviour
 {
-    public const string VERSION = "3.6.0";
+    public const string VERSION = "3.7.0";
 
     [SerializeField]
     private string ApiKey;
@@ -86,7 +86,6 @@ public class AppMetrica : MonoBehaviour
 #endif
 
         Instance.ActivateWithConfiguration (configuration);
-        ProcessCrashReports ();
     }
 
     private void Awake ()
@@ -139,22 +138,10 @@ public class AppMetrica : MonoBehaviour
         }
     }
 
-    public void ProcessCrashReports ()
-    {
-        if (ExceptionsReporting) {
-            var reports = CrashReport.reports;
-            foreach (var report in reports) {
-                var crashLog = string.Format ("Time: {0}\nText: {1}", report.time, report.text);
-                Instance.ReportError ("Crash", crashLog);
-                report.Remove ();
-            }
-        }
-    }
-
     private void HandleLog (string condition, string stackTrace, LogType type)
     {
         if (type == LogType.Exception) {
-            Instance.ReportError (condition, stackTrace);
+            Instance.ReportError (condition, condition, stackTrace);
         }
     }
 

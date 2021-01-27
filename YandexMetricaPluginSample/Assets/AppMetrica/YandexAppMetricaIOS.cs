@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using System.Globalization;
+using YMMJSONUtils;
 
 #if UNITY_IPHONE || UNITY_IOS
 
@@ -28,6 +29,12 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     [DllImport ("__Internal")]
     private static extern void ymm_reportError (string condition, string stackTrace);
+    
+    [DllImport ("__Internal")]
+    private static extern void ymm_reportErrorWithIdentifier (string groupIdentifier, string condition, string stackTrace);
+    
+    [DllImport ("__Internal")]
+    private static extern void ymm_reportErrorWithException (string groupIdentifier, string condition, string exceptionJson);
 
     [DllImport ("__Internal")]
     private static extern void ymm_setLocationTracking (bool enabled);
@@ -64,6 +71,9 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     [DllImport ("__Internal")]
     private static extern void ymm_reportAppOpen (string deeplink);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_putErrorEnvironmentValue (string key, string value);
     
     private delegate void YMMRequestDeviceIDCallbackDelegate (IntPtr actionPtr, string deviceId, string errorString);
 
@@ -95,9 +105,24 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
         ymm_reportEventWithParameters (message, JsonStringFromDictionary (parameters));
     }
 
+    public override void ReportEvent (string message, string json)
+    {
+        ymm_reportEventWithParameters (message, json);
+    }
+
     public override void ReportError (string condition, string stackTrace)
     {
         ymm_reportError (condition, stackTrace);
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, string stackTrace)
+    {
+        ymm_reportErrorWithIdentifier (groupIdentifier, condition, stackTrace);
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, Exception exception)
+    {
+        ymm_reportErrorWithException (groupIdentifier, condition, JsonStringFromDictionary(exception.ToHashtable ()));
     }
 
     public override void SetLocationTracking (bool enabled)
@@ -160,6 +185,11 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     public override void ReportAppOpen (string deeplink)
     {
         ymm_reportAppOpen (deeplink);
+    }
+
+    public override void PutErrorEnvironmentValue (string key, string value)
+    {
+        ymm_putErrorEnvironmentValue (key, value);
     }
 
     public override void ReportReferralUrl (string referralUrl)
@@ -321,6 +351,20 @@ public static class YandexAppMetricaExtensionsIOS
             data["Receipt"] = self.Receipt.Value.ToHashtable ();
         }
         return data;
+    }
+    
+    public static Hashtable ToHashtable (this Exception self)
+    {
+        if (self == null) {
+            return null;
+        }
+
+        return new Hashtable
+        {
+            { "type", self.GetType ().Name },
+            { "message", self.Message },
+            { "stacktrace", self.StackTrace },
+        };
     }
 }
 

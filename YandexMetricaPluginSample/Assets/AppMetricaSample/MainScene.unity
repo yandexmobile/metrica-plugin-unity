@@ -156,6 +156,10 @@ Prefab:
       propertyPath: m_Name
       value: AppMetrica
       objectReference: {fileID: 0}
+    - target: {fileID: 11457290, guid: 1edb7f7d5ea68467097decc77664b28d, type: 2}
+      propertyPath: ApiKey
+      value:
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1edb7f7d5ea68467097decc77664b28d, type: 2}
   m_IsPrefabParent: 0

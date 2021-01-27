@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Text;
 
 #if UNITY_ANDROID
 
@@ -20,12 +21,27 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
 
     private readonly AndroidJavaClass metricaClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetrica");
 
+    private readonly Dictionary<string, string> _javaByteCodeClassByName = new Dictionary<string, string>
+    {
+        { "int", "I" },
+        { "boolean", "Z" },
+        { "byte", "B" },
+        { "short", "S" },
+        { "long", "J" },
+        { "float", "F" },
+        { "double", "D" },
+        { "char", "C" },
+        { "String", "Ljava/lang/String;" },
+        { "Throwable", "Ljava/lang/Throwable;" },
+    };
+
     public override void ActivateWithConfiguration (YandexAppMetricaConfig config)
     {
         base.ActivateWithConfiguration (config);
         using (var activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
             var playerActivityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-            metricaClass.CallStatic ("activate", playerActivityContext, config.ToAndroidAppMetricaConfig ());
+            var androidConfig = config.ToAndroidAppMetricaConfig ();
+            metricaClass.CallStatic ("activate", playerActivityContext, androidConfig);
         }
     }
 
@@ -55,10 +71,30 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         metricaClass.CallStatic ("reportEvent", message, JsonStringFromDictionary (parameters));
     }
 
+    public override void ReportEvent (string message, string json)
+    {
+        CallAppMetrica ("reportEvent", new [] { "String", "String" }, message, json);
+    }
+
     public override void ReportError (string condition, string stackTrace)
     {
-        var throwableObject = new AndroidJavaObject ("java.lang.Throwable", "\n" + stackTrace);
-        metricaClass.CallStatic ("reportError", condition, throwableObject);
+        var throwableObject = stackTrace == null ? null : ThrowableFromStringStackTrace (stackTrace);
+        CallAppMetrica ("reportError", new[] { "String", "Throwable" }, 
+            condition, throwableObject);
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, string stackTrace)
+    {
+        var throwableObject = stackTrace == null ? null : ThrowableFromStringStackTrace (stackTrace);
+        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" }, 
+            groupIdentifier, condition, throwableObject);
+    }
+
+    public override void ReportError (string groupIdentifier, string condition, Exception exception)
+    {
+        var throwableObject = exception.ToAndroidThrowable ();
+        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" }, 
+            groupIdentifier, condition, throwableObject);
     }
 
     public override void SetLocationTracking (bool enabled)
@@ -127,6 +163,11 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         }
     }
 
+    public override void PutErrorEnvironmentValue (string key, string value)
+    {
+        metricaClass.CallStatic ("putErrorEnvironmentValue", key, value);
+    }
+
     public override void ReportReferralUrl (string referralUrl)
     {
         if (string.IsNullOrEmpty(referralUrl) == false) {
@@ -141,6 +182,44 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
     }
 
+    private AndroidJavaObject ThrowableFromStringStackTrace (string stackTrace)
+    {
+        return new AndroidJavaObject ("java.lang.Throwable", "\n" + stackTrace);
+    }
+
+    private void CallAppMetrica (string methodName, string[] types, params object[] args)
+    {
+        var methodID = AndroidJNIHelper.GetMethodID (metricaClass.GetRawClass (), methodName,
+            GetSignatureFromTypeNames(types), true);
+        var jniArgArray = AndroidJNIHelper.CreateJNIArgArray(args);
+        try
+        {
+            AndroidJNI.CallStaticVoidMethod (metricaClass.GetRawClass (), methodID, jniArgArray);
+        }
+        finally
+        {
+            AndroidJNIHelper.DeleteJNIArgArray(args, jniArgArray);
+        }
+    }
+
+    private string GetSignatureFromTypeNames (string[] types)
+    {
+        var str = new StringBuilder ("(");
+        foreach (var type in types)
+        {
+            if (_javaByteCodeClassByName.ContainsKey (type))
+            {
+                str.Append (_javaByteCodeClassByName[type]);
+            } 
+            else
+            {
+                str.AppendFormat ("L{0};", type.Replace ('.', '/'));
+            }
+        }
+
+        str.Append (")V");
+        return str.ToString();
+    }
 }
 
 public static class YandexAppMetricaExtensionsAndroid
@@ -301,6 +380,16 @@ public static class YandexAppMetricaExtensionsAndroid
             revenue = builder.Call<AndroidJavaObject> ("build");
         }
         return revenue;
+    }
+
+    public static AndroidJavaObject ToAndroidThrowable (this Exception self)
+    {
+        if (self == null) {
+            return null;
+        }
+
+        var message = self.GetType () + ": " + self.Message + "\n" + self.StackTrace;
+        return new AndroidJavaObject ("java.lang.Throwable", message);
     }
 }
 

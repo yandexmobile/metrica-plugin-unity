@@ -11,8 +11,6 @@ using UnityEngine.SceneManagement;
 
 public class MainSceneManager : MonoBehaviour
 {
-    private GameObject nullGameObject = null;
-
     private static bool isLocationTracking = true;
     private static bool isStatisticsSending = true;
     private PopUp popupWindow = new PopUp ();
@@ -52,9 +50,6 @@ public class MainSceneManager : MonoBehaviour
             isStatisticsSending = !isStatisticsSending;
             metrica.SetStatisticsSending (isStatisticsSending);
         }
-        if (Button ("[CRASH] NullReference")) {
-            nullGameObject.SendMessage ("");
-        }
         if (Button ("LOG AppMetrica DeviceID")) {
             metrica.RequestAppMetricaDeviceID ((deviceId, error) => {
                 if (error != null) {
@@ -73,6 +68,9 @@ public class MainSceneManager : MonoBehaviour
         }
         if (Button ("[SCENE] Load")) {
             SceneManager.LoadScene ("AnotherScene");
+        }
+        if (Button ("[SCENE] Crash")) {
+            SceneManager.LoadScene ("CrashScene");
         }
 
         if (Button ("Exit")) {

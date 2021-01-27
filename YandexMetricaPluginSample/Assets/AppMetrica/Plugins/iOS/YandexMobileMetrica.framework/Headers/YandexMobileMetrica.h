@@ -18,6 +18,7 @@
     #import "YMMRevenueInfo.h"
     #import "YMMError.h"
     #import "YMMErrorRepresentable.h"
+    #import "YMMECommerce.h"
 #else
     #import <YandexMobileMetrica/YMMYandexMetrica.h>
     #import <YandexMobileMetrica/YMMVersion.h>
@@ -30,4 +31,5 @@
     #import <YandexMobileMetrica/YMMRevenueInfo.h>
     #import <YandexMobileMetrica/YMMError.h>
     #import <YandexMobileMetrica/YMMErrorRepresentable.h>
+    #import <YandexMobileMetrica/YMMECommerce.h>
 #endif

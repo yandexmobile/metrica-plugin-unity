@@ -16,6 +16,7 @@
 
 @class YMMUserProfile;
 @class YMMRevenueInfo;
+@class YMMECommerce;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -163,6 +164,16 @@ DEPRECATED_MSG_ATTRIBUTE("Use reportError:options:onFailure: or reportNSError:op
  @warning Frequent use of the method can lead to increasing outgoing internet traffic and energy consumption.
  */
 - (void)sendEventsBuffer;
+
+/** Sends information about the E-commerce event.
+
+ @note See `YMMEcommerce` for all possible E-commerce events.
+
+ @param eCommerce The object of `YMMECommerceEvent` protocol created with `YMMEcommerce` class.
+ @param onFailure Block to be executed if an error occurs while reporting, the error is passed as block argument.
+ */
+- (void)reportECommerce:(YMMECommerce *)eCommerce
+              onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(eCommerce:onFailure:));
 
 @end
 

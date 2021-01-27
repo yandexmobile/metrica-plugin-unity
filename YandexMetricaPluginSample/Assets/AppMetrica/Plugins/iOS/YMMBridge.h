@@ -20,6 +20,8 @@ bool ymm_isAppMetricaActivated();
 void ymm_reportEvent(char *message);
 void ymm_reportEventWithParameters(char *message, char *parameters);
 void ymm_reportError(char *condition, char *stackTrace);
+void ymm_reportErrorWithIdentifier(char *groupIdentifier, char *condition, char *stackTrace);
+void ymm_reportErrorWithException(char *groupIdentifier, char *condition, char *exceptionJson);
 
 void ymm_setLocationTracking(bool enabled);
 void ymm_setLocation(double latitude, double longitude);
@@ -40,3 +42,5 @@ void ymm_reportReferralUrl(char *referralUrl);
 void ymm_reportAppOpen(char *deeplink);
 
 char *ymm_getLibraryVersion();
+
+void ymm_putErrorEnvironmentValue(char *key, char *value);

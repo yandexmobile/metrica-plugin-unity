@@ -21,6 +21,7 @@
 @class YMMReporterConfiguration;
 @class YMMUserProfile;
 @class YMMRevenueInfo;
+@class YMMECommerce;
 @protocol YMMYandexMetricaReporting;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -265,6 +266,15 @@ DEPRECATED_MSG_ATTRIBUTE("Use reportError:options:onFailure: or reportNSError:op
  */
 + (void)setErrorEnvironmentValue:(nullable NSString *)value forKey:(NSString *)key;
 
+/** Sends information about the E-commerce event.
+
+ @note See `YMMEcommerce` for all possible E-commerce events.
+
+ @param eCommerce The object of `YMMECommerce` class.
+ @param onFailure Block to be executed if an error occurs while reporting, the error is passed as block argument.
+ */
++ (void)reportECommerce:(YMMECommerce *)eCommerce
+              onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(eCommerce:onFailure:));
 @end
 
 NS_ASSUME_NONNULL_END

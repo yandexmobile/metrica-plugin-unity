@@ -33,7 +33,8 @@ public class PostprocessBuildPlayerAppMetrica
         "CoreLocation",
         "CoreGraphics",
         "AdSupport",
-        "Security"
+        "Security",
+        "WebKit"
     };
 
     private static readonly string[] WeakFrameworks = {

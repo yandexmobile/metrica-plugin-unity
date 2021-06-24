@@ -61,7 +61,7 @@ public interface IYandexAppMetrica
     /// <param name="message">Report message.</param>
     /// <param name="parameters">Custom parameters.</param>
     void ReportEvent (string message, Dictionary<string, object> parameters);
-    
+
     void ReportEvent (string message, string json);
 
     /// <summary>
@@ -75,7 +75,7 @@ public interface IYandexAppMetrica
     void ReportError (string condition, string stackTrace);
 
     void ReportError (string groupIdentifier, string condition, string stackTrace);
-    
+
     void ReportError (string groupIdentifier, string condition, Exception exception);
 
     /// <summary>
@@ -130,4 +130,6 @@ public interface IYandexAppMetrica
     void ReportAppOpen (string deeplink);
 
     void PutErrorEnvironmentValue (string key, string value);
+
+    void RequestTrackingAuthorization (Action<YandexAppMetricaRequestTrackingStatus> action);
 }

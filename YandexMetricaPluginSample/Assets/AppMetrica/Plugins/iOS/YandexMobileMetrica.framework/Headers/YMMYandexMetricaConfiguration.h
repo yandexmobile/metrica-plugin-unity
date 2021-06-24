@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @note Enable this option only if your app intended for the "For Kids" category.
  */
-@property (nonatomic, assign) BOOL appForKids;
+@property (nonatomic, assign) BOOL appForKids DEPRECATED_ATTRIBUTE;
 
 /** Set/get preload info, which is used for tracking preload installs.
  Additional info could be https://appmetrica.yandex.com

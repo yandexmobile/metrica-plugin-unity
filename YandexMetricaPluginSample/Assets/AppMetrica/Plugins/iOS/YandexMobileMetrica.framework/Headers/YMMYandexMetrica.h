@@ -23,6 +23,9 @@
 @class YMMRevenueInfo;
 @class YMMECommerce;
 @protocol YMMYandexMetricaReporting;
+#if !TARGET_OS_TV
+@class WKUserContentController;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -275,6 +278,38 @@ DEPRECATED_MSG_ATTRIBUTE("Use reportError:options:onFailure: or reportNSError:op
  */
 + (void)reportECommerce:(YMMECommerce *)eCommerce
               onFailure:(nullable void (^)(NSError *error))onFailure NS_SWIFT_NAME(report(eCommerce:onFailure:));
+
+#if !TARGET_OS_TV
+/**
+ * Adds interface named "AppMetrica" to WKWebView's JavaScript.
+ * It enabled you to report events to AppMetrica from JavaScript code.
+ * @note
+ * This method must be called before adding any WKUserScript that uses AppMetrica interface or creating WKWebView.
+ * Example:
+ * ````
+ * WKWebViewConfiguration *webConfiguration = [WKWebViewConfiguration new];
+ * WKUserContentController *userContentController = [WKUserContentController new];
+ * [YMMYandexMetrica initWebViewReporting:userContentController
+                                onFailure:nil];
+ * [userContentController addUserScript:self.scriptWithAppMetrica];
+ * webConfiguration.userContentController = userContentController;
+ * self.webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webConfiguration];
+ * ````
+ * After web view reporting is initialized you can report event to AppMetrica from your JavaScript code the following way:
+ * ````
+ * function reportToAppMetrica(eventName, eventValue) {
+ *     AppMetrica.reportEvent(eventName, eventValue);
+ * }
+ * ````
+ * Here eventName is any non-empty String, eventValue is a JSON String, may be null or empty.
+ *
+ * @param userContentController UserContentController object used in WebView's configuration
+ * @param onFailure Block to be executed if an error occurs while initializing web view reporting,
+ *                  the error is passed as block argument.
+ */
++ (void)initWebViewReporting:(WKUserContentController *)userContentController
+                   onFailure:(nullable void (^)(NSError *error))onFailure;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

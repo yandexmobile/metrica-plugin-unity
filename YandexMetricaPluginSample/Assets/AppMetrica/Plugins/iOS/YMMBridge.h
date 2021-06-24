@@ -13,6 +13,7 @@
 typedef const void *YMMAction;
 
 typedef void (*YMMRequestDeviceIDCallbackDelegate)(YMMAction action, const char *deviceId, const char *errorString);
+typedef void (*YMMRequestTrackingAuthorization)(YMMAction action, const int status);
 
 void ymm_activateWithConfigurationJSON(char *configurationJSON);
 bool ymm_isAppMetricaActivated();
@@ -44,3 +45,5 @@ void ymm_reportAppOpen(char *deeplink);
 char *ymm_getLibraryVersion();
 
 void ymm_putErrorEnvironmentValue(char *key, char *value);
+
+void ymm_requestTrackingAuthorization(YMMRequestTrackingAuthorization callbackDelegate, YMMAction actionPtr);

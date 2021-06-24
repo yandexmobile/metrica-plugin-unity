@@ -66,6 +66,11 @@ public class MainSceneManager : MonoBehaviour
         if (Button ("LOG Library API Level")) {
             popupWindow.showPopup ("Level: " + metrica.LibraryApiLevel);
         }
+#if UNITY_IOS || UNITY_IPHONE
+        if (Button ("[SCENE] IDFA")) {
+            SceneManager.LoadScene ("IdfaScene");
+        }
+#endif
         if (Button ("[SCENE] Load")) {
             SceneManager.LoadScene ("AnotherScene");
         }

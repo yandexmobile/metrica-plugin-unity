@@ -16,7 +16,7 @@ using System.Text;
 
 public class YandexAppMetricaAndroid : BaseYandexAppMetrica
 {
-    
+
     #region IYandexAppMetrica implementation
 
     private readonly AndroidJavaClass metricaClass = new AndroidJavaClass ("com.yandex.metrica.YandexMetrica");
@@ -79,21 +79,21 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
     public override void ReportError (string condition, string stackTrace)
     {
         var throwableObject = stackTrace == null ? null : ThrowableFromStringStackTrace (stackTrace);
-        CallAppMetrica ("reportError", new[] { "String", "Throwable" }, 
+        CallAppMetrica ("reportError", new[] { "String", "Throwable" },
             condition, throwableObject);
     }
 
     public override void ReportError (string groupIdentifier, string condition, string stackTrace)
     {
         var throwableObject = stackTrace == null ? null : ThrowableFromStringStackTrace (stackTrace);
-        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" }, 
+        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" },
             groupIdentifier, condition, throwableObject);
     }
 
     public override void ReportError (string groupIdentifier, string condition, Exception exception)
     {
         var throwableObject = exception.ToAndroidThrowable ();
-        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" }, 
+        CallAppMetrica ("reportError", new[] { "String", "String", "Throwable" },
             groupIdentifier, condition, throwableObject);
     }
 
@@ -155,7 +155,7 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
     {
         metricaClass.CallStatic ("requestAppMetricaDeviceID", new YandexAppMetricaDeviceIDListenerAndroid (action));
     }
-    
+
     public override void ReportAppOpen (string deeplink)
     {
         if (string.IsNullOrEmpty(deeplink) == false) {
@@ -173,6 +173,10 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         if (string.IsNullOrEmpty(referralUrl) == false) {
             metricaClass.CallStatic("reportReferralUrl", referralUrl);
         }
+    }
+
+    public override void RequestTrackingAuthorization (Action<YandexAppMetricaRequestTrackingStatus> action) {
+        // Not available for Android
     }
 
     #endregion
@@ -210,7 +214,7 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
             if (_javaByteCodeClassByName.ContainsKey (type))
             {
                 str.Append (_javaByteCodeClassByName[type]);
-            } 
+            }
             else
             {
                 str.AppendFormat ("L{0};", type.Replace ('.', '/'));
@@ -397,7 +401,7 @@ public class YandexAppMetricaDeviceIDListenerAndroid : AndroidJavaProxy
 {
     private readonly Action<string, YandexAppMetricaRequestDeviceIDError?> action;
 
-    public YandexAppMetricaDeviceIDListenerAndroid (Action<string, YandexAppMetricaRequestDeviceIDError?> action) 
+    public YandexAppMetricaDeviceIDListenerAndroid (Action<string, YandexAppMetricaRequestDeviceIDError?> action)
         : base ("com.yandex.metrica.AppMetricaDeviceIDListener")
     {
         this.action = action;

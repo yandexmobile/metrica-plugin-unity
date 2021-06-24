@@ -48,11 +48,11 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
     public abstract void ReportEvent (string message, string json);
 
     public abstract void ReportError (string condition, string stackTrace);
-    
+
     public abstract void ReportError (string groupIdentifier, string condition, string stackTrace);
-    
+
     public abstract void ReportError (string groupIdentifier, string condition, Exception exception);
-    
+
     public abstract void SetLocationTracking (bool enabled);
 
     public abstract void SetLocation (YandexAppMetricaConfig.Coordinates? coordinates);
@@ -74,8 +74,10 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
     public abstract void RequestAppMetricaDeviceID (Action<string, YandexAppMetricaRequestDeviceIDError?> action);
 
     public abstract void ReportReferralUrl (string referralUrl);
-    
+
     public abstract void ReportAppOpen (string deeplink);
-    
+
     public abstract void PutErrorEnvironmentValue (string key, string value);
+
+    public abstract void RequestTrackingAuthorization (Action<YandexAppMetricaRequestTrackingStatus> action);
 }

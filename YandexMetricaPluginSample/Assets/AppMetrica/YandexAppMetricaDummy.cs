@@ -91,12 +91,16 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     public override void ReportReferralUrl(string referralUrl)
     {
     }
-    
+
     public override void ReportAppOpen (string deeplink)
     {
     }
 
     public override void PutErrorEnvironmentValue (string key, string value)
+    {
+    }
+
+    public override void RequestTrackingAuthorization (Action<YandexAppMetricaRequestTrackingStatus> action)
     {
     }
 

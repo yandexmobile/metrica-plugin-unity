@@ -8,6 +8,11 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 3.8.0
+
+* Updated native SDKs *(iOS 3.16.0, Android 3.21.1)*
+* Added a method for requesting access to IDFA
+
 ### Version 3.7.0
 
 * Updated native SDKs *(iOS 3.14.0, Android 3.18.0)*

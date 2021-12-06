@@ -92,6 +92,12 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
     if (configDictionary[@"AppForKids"] != nil) {
         config.appForKids = [configDictionary[@"AppForKids"] boolValue];
     }
+    if (configDictionary[@"UserProfileID"] != nil) {
+        config.userProfileID = (NSString *)configDictionary[@"UserProfileID"];
+    }
+    if (configDictionary[@"RevenueAutoTrackingEnabled"] != nil) {
+        config.revenueAutoTrackingEnabled = [configDictionary[@"RevenueAutoTrackingEnabled"] boolValue];
+    }
 
     return config;
 }
@@ -116,6 +122,16 @@ void ymm_activateWithConfigurationJSON(char *configurationJSON)
 bool ymm_isAppMetricaActivated()
 {
     return g_ymm_isAppMetricaActivated;
+}
+
+void ymm_resumeSession()
+{
+    [YMMYandexMetrica resumeSession];
+}
+
+void ymm_pauseSession()
+{
+    [YMMYandexMetrica pauseSession];
 }
 
 void ymm_reportEvent(char *message)

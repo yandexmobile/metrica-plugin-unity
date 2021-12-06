@@ -1,0 +1,6 @@
+    framework module YandexMobileMetricaCrashes {
+        umbrella header "YandexMobileMetricaCrashes-umbrella.h"
+
+        export *
+        module * { export * }
+    }

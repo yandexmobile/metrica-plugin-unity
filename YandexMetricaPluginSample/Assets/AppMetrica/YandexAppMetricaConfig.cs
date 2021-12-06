@@ -35,8 +35,6 @@ public struct YandexAppMetricaConfig
 
     public bool? Logs { get; set; }
 
-    public bool? InstalledAppCollecting { get; set; }
-
     public bool? HandleFirstActivationAsUpdate { get; set; }
 
     public YandexAppMetricaPreloadInfo? PreloadInfo { get; set; }
@@ -48,6 +46,10 @@ public struct YandexAppMetricaConfig
     /// </summary>
     public bool? AppForKids { get; set; }
 
+    public string UserProfileID { get; set; }
+
+    public bool? RevenueAutoTrackingEnabled { get; set; }
+
     public YandexAppMetricaConfig (string apiKey)
     {
         ApiKey = apiKey;
@@ -57,11 +59,12 @@ public struct YandexAppMetricaConfig
         CrashReporting = null;
         LocationTracking = null;
         Logs = null;
-        InstalledAppCollecting = null;
         HandleFirstActivationAsUpdate = null;
         PreloadInfo = null;
         StatisticsSending = null;
         AppForKids = null;
+        UserProfileID = null;
+        RevenueAutoTrackingEnabled = null;
     }
 }
 

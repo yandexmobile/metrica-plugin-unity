@@ -8,6 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 4.0.0
+
+* Updated native SDKs *(iOS 4.0.0, Android 4.0.0)*
+* Remove InstalledAppCollecting from YandexAppMetricaConfig
+* Added property RevenueAutoTrackingEnabled to YandexAppMetricaConfig for disable auto tracking revenue
+* Added dependency from [Install Referrer Library](https://developer.android.com/google/play/installreferrer/library) v2.2
+
 ### Version 3.8.0
 
 * Updated native SDKs *(iOS 3.16.0, Android 3.21.1)*

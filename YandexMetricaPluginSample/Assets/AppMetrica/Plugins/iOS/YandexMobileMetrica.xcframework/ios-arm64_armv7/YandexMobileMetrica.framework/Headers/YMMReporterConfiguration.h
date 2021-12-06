@@ -46,6 +46,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign, readonly) BOOL logs;
 
+/** Sets the ID of the user profile.
+
+ @warning The value can contain up to 200 characters.
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *userProfileID;
+
 /** Initialize configuration with specified Application key.
 
  @param apiKey Application key that is issued during application registration in AppMetrica.
@@ -91,6 +97,12 @@ NS_ASSUME_NONNULL_BEGIN
  By default logging is disabled.
  */
 @property (nonatomic, assign) BOOL logs;
+
+/** Sets the ID of the user profile.
+
+ @warning The value can contain up to 200 characters.
+ */
+@property (nonatomic, copy, nullable) NSString *userProfileID;
 
 - (instancetype)init NS_UNAVAILABLE;
 

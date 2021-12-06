@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Version for Unity
  * © 2015-2020 YANDEX
  * You may not use this file except in compliance with the License.
@@ -6,13 +6,11 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using System.Globalization;
-using YMMJSONUtils;
 
 #if UNITY_IPHONE || UNITY_IOS
 
@@ -20,6 +18,12 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 {
     [DllImport ("__Internal")]
     private static extern void ymm_activateWithConfigurationJSON (string configurationJSON);
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_resumeSession ();
+
+    [DllImport ("__Internal")]
+    private static extern void ymm_pauseSession ();
 
     [DllImport ("__Internal")]
     private static extern void ymm_reportEvent (string message);
@@ -91,12 +95,12 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     public override void ResumeSession ()
     {
-        // It does nothing for iOS
+        ymm_resumeSession ();
     }
 
     public override void PauseSession ()
     {
-        // It does nothing for iOS
+        ymm_pauseSession ();
     }
 
     public override void ReportEvent (string message)
@@ -104,7 +108,7 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
         ymm_reportEvent (message);
     }
 
-    public override void ReportEvent (string message, Dictionary<string, object> parameters)
+    public override void ReportEvent (string message, IDictionary<string, object> parameters)
     {
         ymm_reportEventWithParameters (message, JsonStringFromDictionary (parameters));
     }
@@ -208,7 +212,7 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
 
     #endregion
 
-    private string JsonStringFromDictionary (IDictionary dictionary)
+    private string JsonStringFromDictionary (IEnumerable dictionary)
     {
         return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
     }
@@ -320,6 +324,12 @@ public static class YandexAppMetricaExtensionsIOS
         }
         if (self.AppForKids.HasValue) {
             data["AppForKids"] = self.AppForKids.Value;
+        }
+        if (self.UserProfileID != null) {
+            data["UserProfileID"] = self.UserProfileID;
+        }
+        if (self.RevenueAutoTrackingEnabled.HasValue) {
+            data["RevenueAutoTrackingEnabled"] = self.RevenueAutoTrackingEnabled.Value;
         }
 
         return data;

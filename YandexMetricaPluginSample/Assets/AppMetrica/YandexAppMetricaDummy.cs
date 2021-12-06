@@ -6,8 +6,6 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -32,7 +30,7 @@ public class YandexAppMetricaDummy : BaseYandexAppMetrica
     {
     }
 
-    public override void ReportEvent (string message, Dictionary<string, object> parameters)
+    public override void ReportEvent (string message, IDictionary<string, object> parameters)
     {
     }
 

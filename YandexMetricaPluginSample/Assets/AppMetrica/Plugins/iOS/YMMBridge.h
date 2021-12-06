@@ -18,6 +18,9 @@ typedef void (*YMMRequestTrackingAuthorization)(YMMAction action, const int stat
 void ymm_activateWithConfigurationJSON(char *configurationJSON);
 bool ymm_isAppMetricaActivated();
 
+void ymm_resumeSession();
+void ymm_pauseSession();
+
 void ymm_reportEvent(char *message);
 void ymm_reportEventWithParameters(char *message, char *parameters);
 void ymm_reportError(char *condition, char *stackTrace);

@@ -6,8 +6,6 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -54,13 +52,13 @@ public interface IYandexAppMetrica
 
     /// <summary>
     /// <para>Reports the event.</para>
-    ///
+    /// 
     /// <para>Android: public static void reportEvent(final String eventName, final Map&lt;String, Object&gt; attributes)</para>
     /// <para>iOS: +(void)reportEvent:(NSString *)message parameters:(NSDictionary *)params onFailure:(void (^)(NSError *))onFailure</para>
     /// </summary>
     /// <param name="message">Report message.</param>
     /// <param name="parameters">Custom parameters.</param>
-    void ReportEvent (string message, Dictionary<string, object> parameters);
+    void ReportEvent (string message, IDictionary<string, object> parameters);
 
     void ReportEvent (string message, string json);
 

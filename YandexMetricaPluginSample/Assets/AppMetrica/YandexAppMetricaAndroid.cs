@@ -66,7 +66,7 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
         metricaClass.CallStatic ("reportEvent", message);
     }
 
-    public override void ReportEvent (string message, Dictionary<string, object> parameters)
+    public override void ReportEvent (string message, IDictionary<string, object> parameters)
     {
         metricaClass.CallStatic ("reportEvent", message, JsonStringFromDictionary (parameters));
     }
@@ -181,7 +181,7 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
 
     #endregion
 
-    private string JsonStringFromDictionary (IDictionary dictionary)
+    private string JsonStringFromDictionary (IEnumerable dictionary)
     {
         return dictionary == null ? null : YMMJSONUtils.JSONEncoder.Encode (dictionary);
     }
@@ -253,9 +253,6 @@ public static class YandexAppMetricaExtensionsAndroid
             if (self.Logs ?? false) {
                 builder.Call<AndroidJavaObject> ("withLogs");
             }
-            if (self.InstalledAppCollecting.HasValue) {
-                builder.Call<AndroidJavaObject> ("withInstalledAppCollecting", self.InstalledAppCollecting.Value);
-            }
             if (self.HandleFirstActivationAsUpdate.HasValue) {
                 builder.Call<AndroidJavaObject> ("handleFirstActivationAsUpdate", self.HandleFirstActivationAsUpdate.Value);
             }
@@ -270,6 +267,12 @@ public static class YandexAppMetricaExtensionsAndroid
             }
             if (self.StatisticsSending.HasValue) {
                 builder.Call<AndroidJavaObject> ("withStatisticsSending", self.StatisticsSending.Value);
+            }
+            if (self.UserProfileID != null) {
+                builder.Call<AndroidJavaObject>("withUserProfileID", self.UserProfileID);
+            }
+            if (self.RevenueAutoTrackingEnabled.HasValue) {
+                builder.Call<AndroidJavaObject> ("withRevenueAutoTrackingEnabled", self.RevenueAutoTrackingEnabled.Value);
             }
 
             // Native crashes are currently not supported

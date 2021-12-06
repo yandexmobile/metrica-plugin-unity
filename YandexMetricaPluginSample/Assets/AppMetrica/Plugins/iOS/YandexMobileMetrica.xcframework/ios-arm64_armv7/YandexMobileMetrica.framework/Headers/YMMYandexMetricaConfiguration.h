@@ -137,6 +137,30 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) YMMYandexMetricaPreloadInfo *preloadInfo;
 
+/**
+ Enables/disables auto tracking of inapp purchases.
+
+ By default is enabled.
+ */
+@property (nonatomic, assign) BOOL revenueAutoTrackingEnabled;
+
+/**
+ Enables/disables app open auto tracking.
+ By default is enabled.
+
+ Set this flag to YES to track URLs that open the app.
+ @note Auto tracking will only capture links that open the app. Those that are clicked on while
+ the app is open will be ignored. If you need to track them as well use manual reporting as described
+ [here](https://appmetrica.yandex.ru/docs/mobile-sdk-dg/concepts/ios-operations.html#deeplink-tracking).
+ */
+@property (nonatomic, assign) BOOL appOpenTrackingEnabled;
+
+/** Sets the ID of the user profile.
+
+ @warning The value can contain up to 200 characters.
+ */
+@property (nonatomic, copy, nullable) NSString *userProfileID;
+
 @end
 
 NS_ASSUME_NONNULL_END

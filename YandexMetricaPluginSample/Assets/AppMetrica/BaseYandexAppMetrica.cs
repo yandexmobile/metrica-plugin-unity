@@ -43,7 +43,7 @@ public abstract class BaseYandexAppMetrica : IYandexAppMetrica
 
     public abstract void ReportEvent (string message);
 
-    public abstract void ReportEvent (string message, Dictionary<string, object> parameters);
+    public abstract void ReportEvent (string message, IDictionary<string, object> parameters);
 
     public abstract void ReportEvent (string message, string json);
 

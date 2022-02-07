@@ -27,8 +27,8 @@ public class PostprocessBuildPlayerAppMetrica
 
     private static readonly string[] AppMetricaFrameworks =
     {
-        "YandexMobileMetrica.xcframework",
-        "YandexMobileMetricaCrashes.xcframework"
+        "YandexMobileMetrica",
+        "YandexMobileMetricaCrashes"
     };
 
     private static readonly string[] StrongFrameworks = {
@@ -81,15 +81,21 @@ public class PostprocessBuildPlayerAppMetrica
             var target = project.TargetGuidByName ("Unity-iPhone");
 #endif
 
+            var frameworkArch = PlayerSettings.iOS.sdkVersion == iOSSdkVersion.DeviceSDK
+                ? "ios-arm64_armv7"
+                : "ios-arm64_i386_x86_64-simulator";
+
             var phaseGUID = project.GetFrameworksBuildPhaseByTarget(target);
             foreach (var appMetricaFramework in AppMetricaFrameworks) {
-                var frameworkPath = FrameworksDir + '/' + appMetricaFramework;
-                var dstPath = "AppMetricaFrameworks/" + appMetricaFramework;
-                CopyAndReplaceDirectory (frameworkPath, Path.Combine (path, dstPath));
-                var fileGuid = project.AddFile (dstPath, "Frameworks/" + appMetricaFramework);
+                var frameworkName = appMetricaFramework + ".framework";
+                var frameworkPath = FrameworksDir + '/' + appMetricaFramework + ".xcframework/" + frameworkArch +
+                                    '/' + frameworkName;
+                var dstPath = "AppMetricaFrameworks/" + frameworkName;
+                CopyAndReplaceDirectory (frameworkPath, Path.Combine(path, dstPath));
+                var fileGuid = project.AddFile (dstPath, "Frameworks/" + frameworkName);
                 project.AddFileToBuild (target, fileGuid);
-                project.AddFileToBuildSection (target, phaseGUID, fileGuid);
             }
+            project.AddBuildProperty(target, "FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)/AppMetricaFrameworks");
 
             foreach (var frameworkName in StrongFrameworks) {
                 project.AddFrameworkToProject (target, frameworkName + ".framework", false);

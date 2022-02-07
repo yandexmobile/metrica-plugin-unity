@@ -8,6 +8,10 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 4.2.0
+
+* Fixed a problem with uploading app in AppStore (`YandexMobileMetrica.framework/YandexMobileMetrica' is not permitted. Your app can’t contain standalone executables or libraries, other than a valid CFBundleExecutable of supported bundles.`)
+
 ### Version 4.1.0
 
 * Updated native SDKs *(Android 4.1.1)*

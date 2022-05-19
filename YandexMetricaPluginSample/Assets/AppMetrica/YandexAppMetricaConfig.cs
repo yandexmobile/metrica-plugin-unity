@@ -6,19 +6,27 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using UnityEngine;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 
-[System.Serializable]
+[Serializable]
 public struct YandexAppMetricaConfig
 {
-    [System.Serializable]
-    public struct Coordinates
+    public YandexAppMetricaConfig(string apiKey) : this()
     {
-        public double Latitude { get; set; }
-
-        public double Longitude { get; set; }
+        ApiKey = apiKey;
+        AppVersion = null;
+        Location = null;
+        SessionTimeout = null;
+        CrashReporting = null;
+        LocationTracking = null;
+        Logs = null;
+        HandleFirstActivationAsUpdate = null;
+        PreloadInfo = null;
+        StatisticsSending = null;
+        AppForKids = null;
+        UserProfileID = null;
+        RevenueAutoTrackingEnabled = null;
     }
 
     public string ApiKey { get; private set; }
@@ -40,9 +48,9 @@ public struct YandexAppMetricaConfig
     public YandexAppMetricaPreloadInfo? PreloadInfo { get; set; }
 
     public bool? StatisticsSending { get; set; }
-    
+
     /// <summary>
-    ///  Only iOS
+    ///     Only iOS
     /// </summary>
     public bool? AppForKids { get; set; }
 
@@ -50,34 +58,25 @@ public struct YandexAppMetricaConfig
 
     public bool? RevenueAutoTrackingEnabled { get; set; }
 
-    public YandexAppMetricaConfig (string apiKey)
+    [Serializable]
+    public struct Coordinates
     {
-        ApiKey = apiKey;
-        AppVersion = null;
-        Location = null;
-        SessionTimeout = null;
-        CrashReporting = null;
-        LocationTracking = null;
-        Logs = null;
-        HandleFirstActivationAsUpdate = null;
-        PreloadInfo = null;
-        StatisticsSending = null;
-        AppForKids = null;
-        UserProfileID = null;
-        RevenueAutoTrackingEnabled = null;
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
     }
 }
 
-[System.Serializable]
+[Serializable]
 public struct YandexAppMetricaPreloadInfo
 {
+    public YandexAppMetricaPreloadInfo(string trackingId) : this()
+    {
+        TrackingId = trackingId;
+        AdditionalInfo = new Dictionary<string, string>();
+    }
+
     public string TrackingId { get; private set; }
 
     public Dictionary<string, string> AdditionalInfo { get; private set; }
-
-    public YandexAppMetricaPreloadInfo (string trackingId)
-    {
-        TrackingId = trackingId;
-        AdditionalInfo = new Dictionary<string, string> ();
-    }
 }

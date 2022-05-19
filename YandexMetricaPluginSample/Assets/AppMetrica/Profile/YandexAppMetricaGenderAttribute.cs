@@ -6,12 +6,8 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
-
 public class YandexAppMetricaGenderAttribute
 {
-    private const string AttributeName = "gender";
-
     public enum Gender
     {
         MALE,
@@ -19,13 +15,15 @@ public class YandexAppMetricaGenderAttribute
         OTHER
     }
 
-    public YandexAppMetricaUserProfileUpdate WithValue (Gender value)
+    private const string AttributeName = "gender";
+
+    public YandexAppMetricaUserProfileUpdate WithValue(Gender value)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withValue", null, value.ToString ());
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withValue", null, value.ToString());
     }
 
-    public YandexAppMetricaUserProfileUpdate WithValueReset ()
+    public YandexAppMetricaUserProfileUpdate WithValueReset()
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withValueReset", null);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withValueReset", null);
     }
 }

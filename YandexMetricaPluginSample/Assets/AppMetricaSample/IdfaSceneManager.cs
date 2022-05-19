@@ -6,58 +6,55 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
+using UnityEngine;
 #if UNITY_IOS || UNITY_IPHONE
 using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
 using UnityEngine.iOS;
-using UnityEngine.SceneManagement;
-
-public class IdfaSceneManager : MonoBehaviour
-{
-    private delegate void YMMSampleTequestTrackingAuthorizationDelegate (IntPtr actionPtr, string status);
-
-    private PopUp popupWindow = new PopUp ();
-
-    [DllImport ("__Internal")]
-    private static extern string ymm_sample_getIdfa ();
-
-    [DllImport ("__Internal")]
-    private static extern bool ymm_sample_isAdvertisingTrackingEnabled ();
-
-    [DllImport ("__Internal")]
-    private static extern long ymm_sample_trackingAuthorizationStatus ();
-
-    private void OnGUI ()
-    {
-        popupWindow.onGUI ();
-
-        GUI.contentColor = Color.black;
-
-        GUILayout.Label ("");
-        GUILayout.Label ("IDFA [unity]");
-        GUILayout.Label (Device.advertisingIdentifier);
-        GUILayout.Label ("IDFA [native]");
-        GUILayout.Label (ymm_sample_getIdfa ());
-        GUILayout.Label ("Tracking enabled");
-        GUILayout.Label (ymm_sample_isAdvertisingTrackingEnabled () ? "True" : "False");
-        GUILayout.Label ("Tracking authorization status");
-        GUILayout.Label (((YandexAppMetricaRequestTrackingStatus)ymm_sample_trackingAuthorizationStatus ()).ToString());
-
-        if (Button ("Request IDFA"))
-        {
-            AppMetrica.Instance.RequestTrackingAuthorization (status => popupWindow.showPopup (status.ToString()));
-        }
-
-        if (Button ("Back To Main Scene"))
-        {
-            SceneManager.LoadScene ("MainScene");
-        }
-    }
-
-    private bool Button (string title)
-    {
-        return GUILayout.Button (title, GUILayout.Width (Screen.width), GUILayout.Height (Screen.height / 13));
-    }
-}
 #endif
+
+public class IdfaSceneManager : BaseSceneManager
+{
+    private readonly PopUp _popupWindow = new PopUp();
+
+    protected override void Content()
+    {
+        _popupWindow.OnGUI();
+
+#if UNITY_IOS || UNITY_IPHONE
+        GUILayout.Label("IDFA [unity]");
+        GUILayout.Label(Device.advertisingIdentifier);
+        GUILayout.Label("IDFA [native]");
+        NotEditorLabel(ymm_sample_getIdfa);
+        GUILayout.Label("Tracking enabled");
+        NotEditorLabel(() => ymm_sample_isAdvertisingTrackingEnabled() ? "True" : "False");
+        GUILayout.Label("Tracking authorization status");
+        NotEditorLabel(() =>
+            ((YandexAppMetricaRequestTrackingStatus)ymm_sample_trackingAuthorizationStatus()).ToString());
+
+        Button("Request IDFA",
+            () => AppMetrica.Instance.RequestTrackingAuthorization(status =>
+                _popupWindow.ShowPopup(status.ToString())));
+#else
+        GUILayout.Label("Supported only on iOS");
+#endif
+    }
+
+    protected override void BottomContent()
+    {
+        LoadSceneButton("Back To Main Scene", "MainScene");
+    }
+
+#if UNITY_IOS || UNITY_IPHONE
+    private delegate void YMMSampleTequestTrackingAuthorizationDelegate(IntPtr actionPtr, string status);
+
+    [DllImport("__Internal")]
+    private static extern string ymm_sample_getIdfa();
+
+    [DllImport("__Internal")]
+    private static extern bool ymm_sample_isAdvertisingTrackingEnabled();
+
+    [DllImport("__Internal")]
+    private static extern long ymm_sample_trackingAuthorizationStatus();
+#endif
+}

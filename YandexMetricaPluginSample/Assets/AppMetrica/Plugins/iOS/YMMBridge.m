@@ -99,6 +99,8 @@ YMMYandexMetricaConfiguration *ymm_configurationFromDictionary(NSDictionary *con
         config.revenueAutoTrackingEnabled = [configDictionary[@"RevenueAutoTrackingEnabled"] boolValue];
     }
 
+    // Sessions are monitored by plugin itself
+    config.sessionsAutoTracking = NO;
     return config;
 }
 
@@ -112,6 +114,7 @@ void ymm_activateWithConfigurationJSON(char *configurationJSON)
     if (error == nil && ymm_isDictionaryOrNil(configDictionary)) {
         YMMYandexMetricaConfiguration *config = ymm_configurationFromDictionary(configDictionary);
         [YMMYandexMetrica activateWithConfiguration:config];
+        [[YMMYandexMetrica getPluginExtension] handlePluginInitFinished];
         g_ymm_isAppMetricaActivated = true;
     }
     else {
@@ -201,6 +204,123 @@ void ymm_reportErrorWithException(char *groupIdentifier, char *condition, char *
     }
     else {
         NSLog(@"Invalid exception json for report error to AppMetrica %@", exceptionJsonString);
+    }
+}
+
+YMMStackTraceElement *ymm_stackTraceElementFromJsonDictionary(NSDictionary *dict)
+{
+    if (dict == nil) {
+        return nil;
+    }
+
+    YMMStackTraceElement *stackTraceElement = [[YMMStackTraceElement alloc] init];
+
+    if (dict[@"ClassName"] != nil) {
+        stackTraceElement.className = (NSString *)dict[@"ClassName"];
+    }
+    if (dict[@"MethodName"] != nil) {
+        stackTraceElement.methodName = (NSString *)dict[@"MethodName"];
+    }
+    if (dict[@"FileName"] != nil) {
+        stackTraceElement.fileName = (NSString *)dict[@"FileName"];
+    }
+    if (dict[@"Line"] != nil) {
+        stackTraceElement.line = [[NSNumber alloc] initWithInt:[dict[@"Line"] intValue]];
+    }
+    if (dict[@"Column"] != nil) {
+        stackTraceElement.column = [[NSNumber alloc] initWithInt:[dict[@"Column"] intValue]];
+    }
+
+    return stackTraceElement;
+}
+
+YMMPluginErrorDetails *ymm_errorDetailsFromJsonDictionary(NSDictionary *dict)
+{
+    if (dict == nil) {
+        return nil;
+    }
+
+    YMMPluginErrorDetails *errorDetails = [[YMMPluginErrorDetails alloc] init];
+
+    if (dict[@"ExceptionClass"] != nil) {
+        errorDetails.exceptionClass = (NSString *)dict[@"ExceptionClass"];
+    }
+    if (dict[@"Message"] != nil) {
+        errorDetails.message = (NSString *)dict[@"Message"];
+    }
+    if (dict[@"Stacktrace"] != nil) {
+        NSDictionary *stacktraceItems = dict[@"Stacktrace"];
+        NSMutableArray *backtrace = [[NSMutableArray alloc] init];
+        for (int i = 0; i < stacktraceItems.count; ++i) {
+            NSDictionary *item = stacktraceItems[[@(i) stringValue]];
+            YMMStackTraceElement *stackTraceElement = ymm_stackTraceElementFromJsonDictionary(item);
+            if (stackTraceElement != nil) {
+                [backtrace addObject:stackTraceElement];
+            }
+        }
+
+        errorDetails.backtrace = backtrace;
+    }
+    if (dict[@"Platform"] != nil) {
+        errorDetails.platform = (NSString *)dict[@"Platform"];
+    }
+    if (dict[@"VirtualMachineVersion"] != nil) {
+        errorDetails.virtualMachineVersion = (NSString *)dict[@"VirtualMachineVersion"];
+    }
+    if (dict[@"PluginEnvironment"] != nil) {
+        errorDetails.pluginEnvironment = dict[@"PluginEnvironment"];
+    }
+    return errorDetails;
+}
+
+void ymm_reportUnhandledException(char *errorJson)
+{
+    NSError *errorParsing = nil;
+    NSString *errorJsonString = ymm_stringFromCString(errorJson);
+    NSDictionary *errorDictionary = ymm_dictionaryFromJSONString(errorJsonString, &errorParsing);
+
+    if (errorParsing == nil && ymm_isDictionaryOrNil(errorDictionary) && errorDictionary != nil) {
+        [[YMMYandexMetrica getPluginExtension] reportUnhandledException:ymm_errorDetailsFromJsonDictionary(errorDictionary)
+                                                              onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid error details json for report error to AppMetrica %@", errorJsonString);
+    }
+}
+
+void ymm_reportErrorWithMessage(char *errorJson, char *message)
+{
+    NSString *messageString = ymm_stringFromCString(message);
+    NSError *errorParsing = nil;
+    NSString *errorJsonString = ymm_stringFromCString(errorJson);
+    NSDictionary *errorDictionary = ymm_dictionaryFromJSONString(errorJsonString, &errorParsing);
+
+    if (errorParsing == nil && ymm_isDictionaryOrNil(errorDictionary) && errorDictionary != nil) {
+        [[YMMYandexMetrica getPluginExtension] reportError:ymm_errorDetailsFromJsonDictionary(errorDictionary)
+                                                   message:messageString
+                                                 onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid error details json for report error to AppMetrica %@", errorJsonString);
+    }
+}
+
+void ymm_reportErrorWithIdentifierAndMessage(char *groupIdentifier, char *message, char *errorJson)
+{
+    NSString *groupIdentifierString = ymm_stringFromCString(groupIdentifier);
+    NSString *messageString = ymm_stringFromCString(message);
+    NSError *errorParsing = nil;
+    NSString *errorJsonString = ymm_stringFromCString(errorJson);
+    NSDictionary *errorDictionary = ymm_dictionaryFromJSONString(errorJsonString, &errorParsing);
+
+    if (errorParsing == nil && ymm_isDictionaryOrNil(errorDictionary)) {
+        [[YMMYandexMetrica getPluginExtension] reportErrorWithIdentifier:groupIdentifierString
+                                                                 message:messageString
+                                                                 details:ymm_errorDetailsFromJsonDictionary(errorDictionary)
+                                                               onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid error details json for report error to AppMetrica %@", errorJsonString);
     }
 }
 

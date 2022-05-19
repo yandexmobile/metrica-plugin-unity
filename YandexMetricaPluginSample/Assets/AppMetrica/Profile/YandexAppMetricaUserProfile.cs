@@ -6,27 +6,26 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
 using System.Collections.Generic;
 
 public class YandexAppMetricaUserProfile
 {
-    private readonly List<YandexAppMetricaUserProfileUpdate> Updates = new List<YandexAppMetricaUserProfileUpdate> ();
+    private readonly List<YandexAppMetricaUserProfileUpdate> _updates = new List<YandexAppMetricaUserProfileUpdate>();
 
-    public List<YandexAppMetricaUserProfileUpdate> GetUserProfileUpdates ()
+    public List<YandexAppMetricaUserProfileUpdate> GetUserProfileUpdates()
     {
-        return new List<YandexAppMetricaUserProfileUpdate> (Updates);
+        return new List<YandexAppMetricaUserProfileUpdate>(_updates);
     }
 
-    public YandexAppMetricaUserProfile Apply (YandexAppMetricaUserProfileUpdate update)
+    public YandexAppMetricaUserProfile Apply(YandexAppMetricaUserProfileUpdate update)
     {
-        Updates.Add (update);
+        _updates.Add(update);
         return this;
     }
 
-    public YandexAppMetricaUserProfile ApplyFromArray (List<YandexAppMetricaUserProfileUpdate> updates)
+    public YandexAppMetricaUserProfile ApplyFromArray(List<YandexAppMetricaUserProfileUpdate> updates)
     {
-        Updates.AddRange (updates);
+        _updates.AddRange(updates);
         return this;
     }
 }

@@ -6,8 +6,6 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
-
 public enum YandexAppMetricaRequestDeviceIDError
 {
     UNKNOWN,

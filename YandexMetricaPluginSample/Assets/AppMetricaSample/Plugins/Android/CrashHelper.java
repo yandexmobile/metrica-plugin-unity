@@ -1,3 +1,7 @@
+interface CrashHelperCallback {
+    void invoke();
+}
+
 class CrashHelper {
 
 	public static void crash(String message) throws IllegalArgumentException {
@@ -19,4 +23,8 @@ class CrashHelper {
 			}
 		}).start();
 	}
+
+	public static void callCs(CrashHelperCallback callback) {
+        callback.invoke();
+    }
 }

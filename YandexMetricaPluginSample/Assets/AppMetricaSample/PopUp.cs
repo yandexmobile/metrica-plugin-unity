@@ -7,32 +7,32 @@
  */
 
 using UnityEngine;
-using System.Collections;
 
 public class PopUp
 {
+    private bool _isPopupNeeded;
+    private string _popupText;
 
-    private bool isPopupNeeded = false;
-    private string popupText;
-
-    public void onGUI ()
+    public void OnGUI()
     {
-        if (isPopupNeeded) {
-            GUILayout.Window (0, new Rect ((Screen.width / 2) - 130, (Screen.height / 2) - 65, 300, 150), showGUI, "");
+        if (_isPopupNeeded)
+        {
+            GUILayout.Window(0, new Rect(Screen.width / 2 - 300, Screen.height / 2 - 65, 600, 150), ShowGUI, "");
         }
     }
 
-    public void showPopup (string text)
+    public void ShowPopup(string text)
     {
-        popupText = text;
-        isPopupNeeded = true;
+        _popupText = text;
+        _isPopupNeeded = true;
     }
 
-    private void showGUI (int windowID)
+    private void ShowGUI(int windowID)
     {
-        GUILayout.Label (popupText);
-        if (GUILayout.Button ("OK")) {
-            isPopupNeeded = false;
+        GUILayout.Label(_popupText);
+        if (GUILayout.Button("OK"))
+        {
+            _isPopupNeeded = false;
         }
     }
 }

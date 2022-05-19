@@ -6,21 +6,19 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
-
 public class YandexAppMetricaCounterAttribute
 {
     private const string AttributeName = "customCounter";
 
-    private readonly string Key;
+    private readonly string _key;
 
-    public YandexAppMetricaCounterAttribute (string key)
+    public YandexAppMetricaCounterAttribute(string key)
     {
-        Key = key;
+        _key = key;
     }
 
-    public YandexAppMetricaUserProfileUpdate WithDelta (double value)
+    public YandexAppMetricaUserProfileUpdate WithDelta(double value)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withDelta", Key, value);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withDelta", _key, value);
     }
 }

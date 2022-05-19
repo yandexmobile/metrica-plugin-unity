@@ -6,71 +6,53 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
+using UnityEngine;
+using YMMJSONUtils;
 
-public class AnotherSceneManager : MonoBehaviour
+public class AnotherSceneManager : BaseSceneManager
 {
-    private const int DELAY_BACKGROUND_SEC = 120;
-    private const string DEFAULT_EVENT = "test event";
-    private const string DEFAULT_KEY = "key";
-    private const string DEFAULT_VALUE = "value";
+    private readonly Dictionary<string, object> _eventParameters = new Dictionary<string, object>();
+    private readonly PopUp _popupWindow = new PopUp();
+    private string _eventValue = "test event";
+    private string _key = "key";
+    private string _value = "value";
 
-    private static string eventValue = DEFAULT_EVENT;
-    private Dictionary<string, object> eventParameters = new Dictionary<string, object> ();
-    private string key = DEFAULT_KEY;
-    private string value = DEFAULT_VALUE;
-
-    private PopUp popupWindow = new PopUp ();
-
-    private void OnGUI ()
+    protected override void Content()
     {
-        popupWindow.onGUI ();
+        _popupWindow.OnGUI();
 
-        GUI.contentColor = Color.black;
+        CustomEventGUI();
+        ParamsGUI();
 
-        onCustomEventGUI ();
-        onParamsGUI ();
-
-        if (Button ("Back To Main Scene")) {
-            SceneManager.LoadScene ("MainScene");
-        }
-
-        GUILayout.Label (YMMJSONUtils.JSONEncoder.Encode (eventParameters));
+        GUILayout.Label(JSONEncoder.Encode(_eventParameters));
     }
 
-    private bool Button (string title)
+    protected override void BottomContent()
     {
-        return GUILayout.Button (title, GUILayout.Width (Screen.width), GUILayout.Height (Screen.height / 13));
+        LoadSceneButton("Back To Main Scene", "MainScene");
     }
 
-    void onCustomEventGUI ()
+    private void CustomEventGUI()
     {
-        eventValue = GUILayout.TextField (eventValue);
-        if (Button ("Report Event")) {
-            AppMetrica.Instance.ReportEvent (eventValue);
-            popupWindow.showPopup ("Report: " + eventValue);
-            eventValue = DEFAULT_EVENT;
-        }
+        _eventValue = GUILayout.TextField(_eventValue);
+        Button("Report Event", () =>
+        {
+            AppMetrica.Instance.ReportEvent(_eventValue);
+            _popupWindow.ShowPopup("Report: " + _eventValue);
+        });
     }
 
-    void onParamsGUI ()
+    private void ParamsGUI()
     {
-        key = GUILayout.TextField (key);
-        value = GUILayout.TextField (value);
-        if (Button ("Add param")) {
-            eventParameters [key] = value;
-            key = DEFAULT_KEY;
-            value = DEFAULT_VALUE;
-        }
-        if (Button ("Clear params")) {
-            eventParameters.Clear ();
-        }
-        if (Button ("Report with params")) {
-            AppMetrica.Instance.ReportEvent (eventValue, eventParameters);
-            popupWindow.showPopup ("Report with params");
-            eventParameters.Clear ();
-        }
+        _key = GUILayout.TextField(_key);
+        _value = GUILayout.TextField(_value);
+        Button("Add param", () => _eventParameters[_key] = _value);
+        Button("Clear params", () => _eventParameters.Clear());
+        Button("Report with params", () =>
+        {
+            AppMetrica.Instance.ReportEvent(_eventValue, _eventParameters);
+            _popupWindow.ShowPopup("Report with params");
+        });
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<dependencies>
+  <androidPackages>
+    <androidPackage spec="com.yandex.android:mobmetricalib:4.2.0"/>
+  </androidPackages>
+  <iosPods>
+    <iosPod name="YandexMobileMetrica" version="4.2.0" minTargetSdk="9.0"/>
+  </iosPods>
+</dependencies>

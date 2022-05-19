@@ -6,47 +6,45 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
-
 public abstract class YandexAppMetricaAttribute
 {
     public static YandexAppMetricaBirthDateAttribute BirthDate()
     {
-        return new YandexAppMetricaBirthDateAttribute ();
+        return new YandexAppMetricaBirthDateAttribute();
     }
 
-    public static YandexAppMetricaGenderAttribute Gender ()
+    public static YandexAppMetricaGenderAttribute Gender()
     {
-        return new YandexAppMetricaGenderAttribute ();
+        return new YandexAppMetricaGenderAttribute();
     }
 
-    public static YandexAppMetricaNameAttribute Name ()
+    public static YandexAppMetricaNameAttribute Name()
     {
-        return new YandexAppMetricaNameAttribute ();
+        return new YandexAppMetricaNameAttribute();
     }
 
-    public static YandexAppMetricaNotificationsEnabledAttribute NotificationsEnabled ()
+    public static YandexAppMetricaNotificationsEnabledAttribute NotificationsEnabled()
     {
-        return new YandexAppMetricaNotificationsEnabledAttribute ();
+        return new YandexAppMetricaNotificationsEnabledAttribute();
     }
 
-    public static YandexAppMetricaBooleanAttribute CustomBoolean (string key)
+    public static YandexAppMetricaBooleanAttribute CustomBoolean(string key)
     {
-        return new YandexAppMetricaBooleanAttribute (key);
+        return new YandexAppMetricaBooleanAttribute(key);
     }
 
-    public static YandexAppMetricaCounterAttribute CustomCounter (string key)
+    public static YandexAppMetricaCounterAttribute CustomCounter(string key)
     {
-        return new YandexAppMetricaCounterAttribute (key);
+        return new YandexAppMetricaCounterAttribute(key);
     }
 
-    public static YandexAppMetricaNumberAttribute CustomNumber (string key)
+    public static YandexAppMetricaNumberAttribute CustomNumber(string key)
     {
-        return new YandexAppMetricaNumberAttribute (key);
+        return new YandexAppMetricaNumberAttribute(key);
     }
 
-    public static YandexAppMetricaStringAttribute CustomString (string key)
+    public static YandexAppMetricaStringAttribute CustomString(string key)
     {
-        return new YandexAppMetricaStringAttribute (key);
+        return new YandexAppMetricaStringAttribute(key);
     }
 }

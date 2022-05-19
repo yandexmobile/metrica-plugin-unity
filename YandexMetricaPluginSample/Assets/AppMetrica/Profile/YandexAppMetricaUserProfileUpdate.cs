@@ -6,19 +6,21 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-using System;
-
 public struct YandexAppMetricaUserProfileUpdate
 {
-    public string AttributeName { get; private set; }
+    public string AttributeName { get; set; }
 
-    public string MethodName { get; private set; }
+    public string MethodName { get; set; }
 
-    public string Key { get; private set; }
+    public string Key { get; set; }
 
-    public object[] Values { get; private set; }
+    public object[] Values { get; set; }
 
-    public YandexAppMetricaUserProfileUpdate (string attributeName, string methodName, string key, params object[] values)
+    public YandexAppMetricaUserProfileUpdate(
+        string attributeName,
+        string methodName,
+        string key,
+        params object[] values) : this()
     {
         AttributeName = attributeName;
         MethodName = methodName;

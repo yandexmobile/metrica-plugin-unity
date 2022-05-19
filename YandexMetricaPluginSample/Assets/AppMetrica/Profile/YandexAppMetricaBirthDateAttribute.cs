@@ -12,33 +12,33 @@ public class YandexAppMetricaBirthDateAttribute
 {
     private const string AttributeName = "birthDate";
 
-    public YandexAppMetricaUserProfileUpdate WithAge (int age)
+    public YandexAppMetricaUserProfileUpdate WithAge(int age)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withAge", null, age);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withAge", null, age);
     }
 
-    public YandexAppMetricaUserProfileUpdate WithBirthDate (DateTime date)
+    public YandexAppMetricaUserProfileUpdate WithBirthDate(DateTime date)
     {
-        return WithBirthDate (date.Year, date.Month, date.Day);
+        return WithBirthDate(date.Year, date.Month, date.Day);
     }
 
-    public YandexAppMetricaUserProfileUpdate WithBirthDate (int year)
+    public YandexAppMetricaUserProfileUpdate WithBirthDate(int year)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withBirthDate", null, year);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withBirthDate", null, year);
     }
 
-    public YandexAppMetricaUserProfileUpdate WithBirthDate (int year, int month)
+    public YandexAppMetricaUserProfileUpdate WithBirthDate(int year, int month)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withBirthDate", null, year, month);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withBirthDate", null, year, month);
     }
 
-    public YandexAppMetricaUserProfileUpdate WithBirthDate (int year, int month, int day)
+    public YandexAppMetricaUserProfileUpdate WithBirthDate(int year, int month, int day)
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withBirthDate", null, year, month, day);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withBirthDate", null, year, month, day);
     }
 
-    public YandexAppMetricaUserProfileUpdate WithValueReset ()
+    public YandexAppMetricaUserProfileUpdate WithValueReset()
     {
-        return new YandexAppMetricaUserProfileUpdate (AttributeName, "withValueReset", null);
+        return new YandexAppMetricaUserProfileUpdate(AttributeName, "withValueReset", null);
     }
 }

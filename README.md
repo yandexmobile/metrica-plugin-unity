@@ -8,6 +8,16 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 4.3.0
+
+* Updated native SDKs *(iOS 4.2.0, Android 4.2.0)*
+* Supported [EDM4U](https://github.com/googlesamples/unity-jar-resolver) for dependency resolution
+* Crash handling improved
+* Added methods for error reporting `ReportError(Exception exception, string condition)`, `ReportErrorFromLogCallback(string condition, string stackTrace)`
+* Added method for crash reporting `ReportUnhandledException(Exception exception)`
+* Deprecared methods `ReportError(string condition, string stackTrace)`. Use the `ReportError(Exception exception, string condition)` instead
+* `ReportError(string groupIdentifier, string condition, string stackTrace)`. Use the `ReportError(string groupIdentifier, string condition, Exception exception)` instead
+
 ### Version 4.2.0
 
 * Fixed a problem with uploading app in AppStore (`YandexMobileMetrica.framework/YandexMobileMetrica' is not permitted. Your app can’t contain standalone executables or libraries, other than a valid CFBundleExecutable of supported bundles.`)

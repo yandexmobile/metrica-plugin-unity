@@ -8,6 +8,12 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 5.0.0
+
+* Updated native SDKs *(Android 5.0.0)*
+* Removed LocationService.Start call
+* Removed use of APP_METRICA_TRACK_LOCATION_DISABLED define
+
 ### Version 4.3.0
 
 * Updated native SDKs *(iOS 4.2.0, Android 4.2.0)*

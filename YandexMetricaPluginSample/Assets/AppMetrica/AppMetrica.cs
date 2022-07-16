@@ -6,16 +6,11 @@
  * https://yandex.com/legal/appmetrica_sdk_agreement/
  */
 
-// Uncomment the following line to disable location tracking
-// #define APP_METRICA_TRACK_LOCATION_DISABLED
-// or just add APP_METRICA_TRACK_LOCATION_DISABLED into
-// Player Settings -> Other Settings -> Scripting Define Symbols
-
 using UnityEngine;
 
 public class AppMetrica : MonoBehaviour
 {
-    public const string VERSION = "4.3.0";
+    public const string VERSION = "5.0.0";
 
     private static bool s_isInitialized;
 
@@ -28,11 +23,11 @@ public class AppMetrica : MonoBehaviour
 
     [SerializeField] private uint SessionTimeoutSec = 10;
 
-    [SerializeField] private bool LocationTracking = true;
+    [SerializeField] private bool LocationTracking = false;
 
-    [SerializeField] private bool Logs = true;
+    [SerializeField] private bool Logs = false;
 
-    [SerializeField] private bool HandleFirstActivationAsUpdate;
+    [SerializeField] private bool HandleFirstActivationAsUpdate = false;
 
     [SerializeField] private bool StatisticsSending = true;
 
@@ -134,18 +129,9 @@ public class AppMetrica : MonoBehaviour
             SessionTimeout = (int)SessionTimeoutSec,
             Logs = Logs,
             HandleFirstActivationAsUpdate = HandleFirstActivationAsUpdate,
-            StatisticsSending = StatisticsSending
+            StatisticsSending = StatisticsSending,
+            LocationTracking = LocationTracking
         };
-
-#if !APP_METRICA_TRACK_LOCATION_DISABLED
-        configuration.LocationTracking = LocationTracking;
-        if (LocationTracking)
-        {
-            Input.location.Start();
-        }
-#else
-        configuration.LocationTracking = false;
-#endif
 
         Instance.ActivateWithConfiguration(configuration);
     }

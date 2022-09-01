@@ -48,22 +48,22 @@ public class CrashSceneManager : BaseSceneManager
     private void CSharpCrashGUI()
     {
         GUILayout.Label("C# crash");
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash", () =>
         {
             ThrowCrash("unity crash");
         });
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash in other line", () =>
         {
             throw new SystemException("unity crash");
         });
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash with other message", () =>
         {
             ThrowCrash("yet another unity crash");
         });
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Other crash", () => ((GameObject)null).SendMessage(""));
     }
 
@@ -71,18 +71,18 @@ public class CrashSceneManager : BaseSceneManager
     {
 #if UNITY_2018_2_OR_NEWER && UNITY_ANDROID
         GUILayout.Label("Java crash");
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash", () => _crashHelper.CallStatic("crash", "java crash"));
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash in other line", () => _crashHelper.CallStatic("crashInOtherLine", "java crash"));
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Crash with other message", () => _crashHelper.CallStatic("crash", "yet another java crash"));
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Other crash", () => _crashHelper.CallStatic("otherCrash", "other java crash"));
         // Sent as crash. Caught by the native SDK.
         Button("Crash in Java code in other Thread",
             () => _crashHelper.CallStatic("crashInOtherThread", "java crash in other thread"));
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Java -> C# Crash", () =>
         {
             _crashHelper.CallStatic("callCs", new CrashHelperCallbackJava(() =>
@@ -90,7 +90,7 @@ public class CrashSceneManager : BaseSceneManager
                 ThrowCrash("java -> c# crash");
             }));
         });
-        // Sent as crash. Caught in `AppMetrica.HandleLog`.
+        // Sent as error. Caught in `AppMetrica.HandleLog`.
         Button("Java -> C# -> Java Crash", () =>
         {
             _crashHelper.CallStatic("callCs", new CrashHelperCallbackJava(() =>

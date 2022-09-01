@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class AppMetrica : MonoBehaviour
 {
-    public const string VERSION = "5.0.0";
+    public const string VERSION = "5.1.0";
 
     private static bool s_isInitialized;
 

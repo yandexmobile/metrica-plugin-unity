@@ -290,7 +290,7 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     {
         try
         {
-            ReportUnhandledException(YandexAppMetricaErrorDetails.FromLogCallback(condition, stackTrace));
+            ReportError(YandexAppMetricaErrorDetails.FromLogCallback(condition, stackTrace), condition);
         }
         catch (Exception e)
         {

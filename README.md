@@ -8,6 +8,11 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 5.1.0
+
+* Updated native SDKs *(Android 5.0.1)*
+* Exceptions from Application.logMessageReceived are sent as errors
+
 ### Version 5.0.0
 
 * Updated native SDKs *(Android 5.0.0)*

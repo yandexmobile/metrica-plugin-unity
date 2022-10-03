@@ -58,6 +58,13 @@ public interface IYandexAppMetrica
     void PauseSession();
 
     /// <summary>
+    /// Sends information about ad revenue.
+    /// </summary>
+    /// <param name="adRevenue">Object containing the information about ad revenue.</param>
+    /// <seealso cref="YandexAppMetricaAdRevenue"/>
+    void ReportAdRevenue(YandexAppMetricaAdRevenue adRevenue);
+
+    /// <summary>
     ///     <para>Reports the event.</para>
     ///     <para>Android: public static void reportEvent(final String eventName)</para>
     ///     <para>iOS: +(void)reportEvent:(NSString *)message onFailure:(void (^)(NSError *))onFailure</para>

@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -128,6 +129,11 @@ public class YandexAppMetricaAndroid : BaseYandexAppMetrica
             AndroidJavaObject playerActivityContext = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
             _metricaClass.CallStatic("pauseSession", playerActivityContext);
         }
+    }
+
+    public override void ReportAdRevenue(YandexAppMetricaAdRevenue adRevenue)
+    {
+        CallAppMetrica("reportAdRevenue", new []{"com.yandex.metrica.AdRevenue"}, adRevenue.ToAndroidAdRevenue());
     }
 
     public override void ReportEvent(string message)
@@ -527,6 +533,12 @@ public static class YandexAppMetricaExtensionsAndroid
         return integer;
     }
 
+    public static AndroidJavaObject ToAndroidBigDecimal(this decimal self)
+    {
+        return new AndroidJavaObject("java.math.BigDecimal",
+            self.ToString(CultureInfo.CreateSpecificCulture("en-US")));
+    }
+
     public static AndroidJavaObject ToAndroidCurrency(this string self)
     {
         AndroidJavaObject currency = null;
@@ -567,6 +579,66 @@ public static class YandexAppMetricaExtensionsAndroid
         }
 
         return revenue;
+    }
+
+    public static AndroidJavaObject ToAndroidAdType(this YandexAppMetricaAdRevenue.AdTypeEnum self)
+    {
+        AndroidJavaObject adType = null;
+        using (AndroidJavaClass adTypeClass = new AndroidJavaClass("com.yandex.metrica.AdType"))
+        {
+            adType = adTypeClass.GetStatic<AndroidJavaObject>(self.ToString().ToUpper());
+        }
+
+        return adType;
+    }
+
+    public static AndroidJavaObject ToAndroidAdRevenue(this YandexAppMetricaAdRevenue self)
+    {
+        AndroidJavaObject adRevenue;
+        using (AndroidJavaClass revenueClass = new AndroidJavaClass("com.yandex.metrica.AdRevenue"))
+        {
+            AndroidJavaObject adRevenueBigDecimal = self.AdRevenue.ToAndroidBigDecimal();
+            AndroidJavaObject currency = self.Currency.ToAndroidCurrency();
+            AndroidJavaObject builder = revenueClass.CallStatic<AndroidJavaObject>("newBuilder",
+                adRevenueBigDecimal, currency);
+
+            if (self.AdType.HasValue)
+            {
+                builder.Call<AndroidJavaObject>("withAdType", self.AdType.Value.ToAndroidAdType());
+            }
+            if (self.AdNetwork != null)
+            {
+                builder.Call<AndroidJavaObject>("withAdNetwork", self.AdNetwork);
+            }
+            if (self.AdUnitId != null)
+            {
+                builder.Call<AndroidJavaObject>("withAdUnitId", self.AdUnitId);
+            }
+            if (self.AdUnitName != null)
+            {
+                builder.Call<AndroidJavaObject>("withAdUnitName", self.AdUnitName);
+            }
+            if (self.AdPlacementId != null)
+            {
+                builder.Call<AndroidJavaObject>("withAdPlacementId", self.AdPlacementId);
+            }
+            if (self.AdPlacementName != null)
+            {
+                builder.Call<AndroidJavaObject>("withAdPlacementName", self.AdPlacementName);
+            }
+            if (self.Precision != null)
+            {
+                builder.Call<AndroidJavaObject>("withPrecision", self.Precision);
+            }
+            if (self.Payload != null)
+            {
+                builder.Call<AndroidJavaObject>("withPayload", self.Payload.ToAndroidMap());
+            }
+
+            adRevenue = builder.Call<AndroidJavaObject>("build");
+        }
+
+        return adRevenue;
     }
 
     public static AndroidJavaObject ToAndroidThrowable(this Exception self)
@@ -676,7 +748,7 @@ public static class YandexAppMetricaExtensionsAndroid
         return new AndroidJavaObject("java.util.ArrayList");
     }
 
-    private static AndroidJavaObject ToAndroidMap(this Dictionary<string, string> self)
+    private static AndroidJavaObject ToAndroidMap(this IDictionary<string, string> self)
     {
         AndroidJavaObject javaMap = new AndroidJavaObject("java.util.HashMap");
         IntPtr putMethod = AndroidJNIHelper.GetMethodID(javaMap.GetRawClass(), "put",

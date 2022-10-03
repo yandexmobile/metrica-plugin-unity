@@ -8,6 +8,13 @@ Documentation could be found at [AppMetrica official site][DOCUMENTATION].
 
 ## Changelog
 
+### Version 5.2.0
+
+* Updated native SDKs *(iOS 4.4.0, Android 5.2.0)*
+* Supported AdRevenue
+* Added class YandexAppMetricaAdRevenue
+* Added a method to report ad revenue `ReportAdRevenue(YandexAppMetricaAdRevenue adRevenue)`
+
 ### Version 5.1.0
 
 * Updated native SDKs *(Android 5.0.1)*

@@ -21,6 +21,7 @@ bool ymm_isAppMetricaActivated();
 void ymm_resumeSession();
 void ymm_pauseSession();
 
+void ymm_reportAdRevenueJSON(char *adRevenueJson);
 void ymm_reportEvent(char *message);
 void ymm_reportEventWithParameters(char *message, char *parameters);
 void ymm_reportError(char *condition, char *stackTrace);

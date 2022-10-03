@@ -28,6 +28,9 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     private static extern void ymm_pauseSession();
 
     [DllImport("__Internal")]
+    private static extern void ymm_reportAdRevenueJSON(string adRevenueJson);
+
+    [DllImport("__Internal")]
     private static extern void ymm_reportEvent(string message);
 
     [DllImport("__Internal")]
@@ -189,6 +192,11 @@ public class YandexAppMetricaIOS : BaseYandexAppMetrica
     public override void PauseSession()
     {
         ymm_pauseSession();
+    }
+
+    public override void ReportAdRevenue(YandexAppMetricaAdRevenue adRevenue)
+    {
+        ymm_reportAdRevenueJSON(JsonStringFromDictionary(adRevenue.ToHashtable()));
     }
 
     public override void ReportEvent(string message)
@@ -534,6 +542,49 @@ public static class YandexAppMetricaExtensionsIOS
         if (self.Receipt.HasValue)
         {
             data["Receipt"] = self.Receipt.Value.ToHashtable();
+        }
+
+        return data;
+    }
+
+    public static Hashtable ToHashtable(this YandexAppMetricaAdRevenue self)
+    {
+        Hashtable data = new Hashtable
+        {
+            { "AdRevenue", self.AdRevenue.ToString(CultureInfo.CreateSpecificCulture("en-US")) },
+            { "Currency", self.Currency }
+        };
+        if (self.AdType.HasValue)
+        {
+            data["AdType"] = self.AdType.Value.ToString();
+        }
+        if (self.AdNetwork != null)
+        {
+            data["AdNetwork"] = self.AdNetwork;
+        }
+        if (self.AdUnitId != null)
+        {
+            data["AdUnitId"] = self.AdUnitId;
+        }
+        if (self.AdUnitName != null)
+        {
+            data["AdUnitName"] = self.AdUnitName;
+        }
+        if (self.AdPlacementId != null)
+        {
+            data["AdPlacementId"] = self.AdPlacementId;
+        }
+        if (self.AdPlacementName != null)
+        {
+            data["AdPlacementName"] = self.AdPlacementName;
+        }
+        if (self.Precision != null)
+        {
+            data["Precision"] = self.Precision;
+        }
+        if (self.Payload != null)
+        {
+            data["Payload"] = JSONEncoder.Encode(self.Payload);
         }
 
         return data;

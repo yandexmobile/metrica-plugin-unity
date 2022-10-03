@@ -137,6 +137,71 @@ void ymm_pauseSession()
     [YMMYandexMetrica pauseSession];
 }
 
+YMMAdType ymm_adTypeFromString(NSString *adType)
+{
+    if (adType == nil) {
+        return nil;
+    }
+    if ([adType isEqualToString:@"Native"]) {
+        return YMMAdTypeNative;
+    }
+    if ([adType isEqualToString:@"Banner"]) {
+        return YMMAdTypeBanner;
+    }
+    if ([adType isEqualToString:@"Rewarded"]) {
+        return YMMAdTypeRewarded;
+    }
+    if ([adType isEqualToString:@"Interstitial"]) {
+        return YMMAdTypeInterstitial;
+    }
+    if ([adType isEqualToString:@"Mrec"]) {
+        return YMMAdTypeMrec;
+    }
+    if ([adType isEqualToString:@"Other"]) {
+        return YMMAdTypeOther;
+    }
+    return YMMAdTypeUnknown;
+}
+
+YMMAdRevenueInfo *ymm_adRevenueFromDictionary(NSDictionary *adRevenueDictionary)
+{
+    if (adRevenueDictionary == nil) {
+        return nil;
+    }
+    NSString *adRevenueMoneyStr = adRevenueDictionary[@"AdRevenue"];
+    NSDictionary *locale = [NSDictionary dictionaryWithObject:@"." forKey:NSLocaleDecimalSeparator];
+    NSDecimalNumber *adRevenueDecimal = [NSDecimalNumber decimalNumberWithString:adRevenueMoneyStr locale:locale];
+    NSString *currency = adRevenueDictionary[@"Currency"];
+    YMMMutableAdRevenueInfo *adRevenue = [[YMMMutableAdRevenueInfo alloc] initWithAdRevenue:adRevenueDecimal currency:currency];
+
+    [adRevenue setAdType:ymm_adTypeFromString(adRevenueDictionary[@"AdType"])];
+    [adRevenue setAdNetwork:adRevenueDictionary[@"AdNetwork"]];
+    [adRevenue setAdUnitID:adRevenueDictionary[@"AdUnitId"]];
+    [adRevenue setAdUnitName:adRevenueDictionary[@"AdUnitName"]];
+    [adRevenue setAdPlacementID:adRevenueDictionary[@"AdPlacementId"]];
+    [adRevenue setAdPlacementName:adRevenueDictionary[@"AdPlacementName"]];
+    [adRevenue setPrecision:adRevenueDictionary[@"Precision"]];
+    [adRevenue setPayload:ymm_dictionaryFromJSONString(adRevenueDictionary[@"Payload"], nil)];
+
+    return adRevenue;
+}
+
+void ymm_reportAdRevenueJSON(char *adRevenueJson)
+{
+    NSString *adRevenueString = ymm_stringFromCString(adRevenueJson);
+
+    NSError *error = nil;
+    NSDictionary *adRevenueDictionary = ymm_dictionaryFromJSONString(adRevenueString, &error);
+
+    if (error == nil && ymm_isDictionaryOrNil(adRevenueDictionary)) {
+        YMMAdRevenueInfo *adRevenue = ymm_adRevenueFromDictionary(adRevenueDictionary);
+        [YMMYandexMetrica reportAdRevenue:adRevenue onFailure:nil];
+    }
+    else {
+        NSLog(@"Invalid ad revenue json %@", adRevenueString);
+    }
+}
+
 void ymm_reportEvent(char *message)
 {
     NSString *messageString = ymm_stringFromCString(message);

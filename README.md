@@ -1,3 +1,8 @@
+# 🚀 Project Moved to New Repository! 🚀
+> The plugin has moved to a new repository! To get the latest updates, contribute, or report issues, please visit our [new repository](https://github.com/appmetrica/appmetrica-unity-plugin).
+
+---
+
 # AppMetrica - Unity Plugin
 
 ## License
